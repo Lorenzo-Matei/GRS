@@ -1,0 +1,20 @@
+.promo-section-container{
+    display: grid;
+    grid-template-columns: 49% 49%;
+    gap: 2%;
+    width: 90%;
+    height: auto;
+    margin: 0% 0% 2% 0%;
+    justify-content: center;
+}
+
+@media screen and (max-width: 1000px) {
+    .promo-section-container{
+        gap: 3%;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 100%));
+      margin: 0% 0% 5% 0%;
+
+    }
+
+
+  }

@@ -1,0 +1,20 @@
+
+
+.ratings-container{
+    display: grid;
+}
+
+.rating-item{
+    padding: 3px 0px;
+    cursor: pointer;
+}
+
+.rating-item:hover{
+    background-color: rgba(221, 221, 221, 0.137);
+    border-radius: 7px;
+}
+
+.react-simple-star-rating-tooltip{
+    border-radius: 50px;
+    
+}

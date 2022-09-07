@@ -1,0 +1,54 @@
+.price-search-filter{
+    width: 100%;
+}
+
+.quick-price-search-item{
+    width: 100%;
+    padding: 3px 0px;
+    margin: 0px;
+    
+    color: #ddd;
+    font-weight: 100;
+    font-size: medium;
+
+    cursor: pointer;
+
+}
+
+.quick-price-search-item:hover{
+    background-color: rgba(221, 221, 221, 0.137);
+    border-radius: 7px;
+}
+
+.price-input-container{
+    width: 100%;
+    display: flex;
+    margin: auto;
+    padding: 10px;
+
+}
+
+.price-input-item{
+    margin: auto;
+    width: 30%;
+    border: solid 1px rgb(13, 230, 78);
+
+}
+
+
+
+.price-input-text{
+    height: 100%;
+    width: fit-content;
+    margin: 0px 0px;
+
+    text-align: center;
+    vertical-align: middle;
+    font-size: 25px;
+    color: #ddd;
+
+}
+
+.price-input-item.form-control{
+    padding: 8px 8px;
+}

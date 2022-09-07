@@ -1,0 +1,116 @@
+.cart-page-container {
+  width: 90%;
+  height: auto;
+  margin: auto;
+  margin-top: 2%;
+}
+
+/////////////////////////////////////////////////////////////////
+
+.cart-page-items-container {
+  //   width: fit-content;
+  background: rgba(0, 0, 0, 0.55);
+  //   box-shadow: 0 8px 32px 0 rgb(31 38 135 / 37%);
+  backdrop-filter: blur(10.5px);
+  -webkit-backdrop-filter: blur(10.5px);
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  //   padding: 1rem;
+}
+.cart-page-title-container {
+  background-color: transparent;
+  border-radius: 10px;
+  border: solid 1px #ddd;
+  margin-top: 1rem;
+  padding: 5px;
+}
+
+.cart-page-title {
+  color: #ddd;
+}
+
+#cart-page-item-name {
+  color: #fff;
+}
+
+.quantity-mod-btn {
+  color: #ddd;
+  padding: 10px;
+  margin: auto 10px;
+}
+
+.cart-page-quantity-badge {
+  font-size: large;
+}
+
+.cart-page-price {
+  font-weight: 300;
+  line-height: 2rem;
+  color: #ddd;
+}
+
+.cart-page-cart-item {
+  background-color: transparent;
+}
+
+.img-thumbnail {
+  background-color: #ddd;
+  max-height: 200px;
+}
+
+/// /////////////////////////////////////////////////////////////////
+
+.cart-page-checkout-container {
+  height: fit-content;
+  width: fit-content;
+  //   background-color: #ddd;
+  border-radius: 10px;
+
+  background: rgba(0, 0, 0, 0.55);
+  //   box-shadow: 0 8px 32px 0 rgb(31 38 135 / 37%);
+  backdrop-filter: blur(10.5px);
+  -webkit-backdrop-filter: blur(10.5px);
+  border-radius: 10px;
+  //   border: 1px solid #ddd;
+  padding: 1rem;
+}
+
+.cart-page-checkout-listgroupitem {
+  background-color: transparent;
+}
+
+.cart-page-subtotal-title {
+  text-align: center;
+  color: #fff;
+  margin: 1rem 0rem;
+}
+
+.cart-page-checkout {
+  text-align: center;
+  margin: auto;
+}
+
+#cart-page-subtotal-title {
+  text-align: center;
+  color: #fff;
+}
+
+.cart-page-tax {
+  text-align: center;
+  color: #fff;
+  margin: 1rem 0rem;
+}
+
+.cart-page-total {
+  font-weight: 500;
+  text-align: center;
+  color: #fff;
+  margin: 1rem 0rem;
+  border: solid 1px #fff;
+  border-radius: 10px;
+}
+
+.cart-page-checkout-btn {
+  background-color: transparent;
+  color: #fff;
+}

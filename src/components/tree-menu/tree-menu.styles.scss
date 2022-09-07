@@ -1,0 +1,38 @@
+.d-tree-container{
+    list-style: none;
+    padding: 0;
+}
+
+
+
+.d-tree-node{
+    padding: 0.25rem 0.25rem 0.25rem 1.5rem;
+    border-radius: 5px;
+    color: #ddd;
+    // font-weight: 700;
+}
+
+.d-tree-node:hover{
+    background-color: rgba(221, 221, 221, 0.11);
+}
+
+
+
+
+.d-tree-toggler{
+    transform: rotate(-42deg);
+    transition: all 200ms ease;
+    // font-weight: 700;
+
+    // transform: 
+
+}
+
+.d-tree-toggler.active{
+    transform: rotate(-132deg);
+    transition: all 200ms ease;
+    font-weight: 700;
+
+
+}
+

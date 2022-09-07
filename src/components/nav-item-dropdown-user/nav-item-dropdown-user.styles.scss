@@ -1,0 +1,129 @@
+.dropdown-user {
+  // display: flex;
+  position: absolute;
+  top: 58px;
+  right: 10%;
+  width: 250px;
+  transform: translateX(-91%, 1%);
+  border-radius: 5px;
+
+  padding: 10px;
+  overflow: hidden;
+  z-index: 9999;
+
+  scroll-behavior: auto;
+  transition: height 500ms ease;
+  overflow-y: scroll;
+  max-height: 475px;
+
+  background: rgba(0, 0, 0, 0.75);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(10.5px);
+  -webkit-backdrop-filter: blur(10.5px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.dropdown-user::-webkit-scrollbar {
+  width: 8px; /* width of the entire scrollbar */
+  border-radius: 5px;
+}
+
+.dropdown-user::-webkit-scrollbar-track {
+  // background: #ddd;        /* color of the tracking area */
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
+.dropdown-user::-webkit-scrollbar-thumb {
+  background-color: #ddd; /* color of the scroll thumb */
+  border-radius: 50px; /* roundness of the scroll thumb */
+  border: 4px solid #ddd; /* creates padding around scroll thumb */
+}
+
+.menu {
+  width: 100%;
+}
+
+.menu-item {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  transition: background(500ms);
+  padding: 0.5rem;
+  color: #ddd;
+  font-weight: 400;
+  cursor: pointer;
+  // position: absolute;
+}
+
+.menu-item:hover {
+  background-color: #fff;
+}
+
+.menu-item .icon-button {
+  margin-right: 0.7rem;
+}
+
+.menu-item .icon-button:hover {
+  filter: none;
+}
+
+.icon-right {
+  margin-left: auto;
+}
+
+/////////////////////////////////////////////////////
+.menu-primary-enter {
+  position: absolute;
+  transform: translateX(-100%);
+}
+
+.menu-primary-enter-active {
+  transform: translateX(0%);
+  transition: all 500ms ease;
+}
+
+.menu-primary-exit {
+  position: absolute;
+}
+
+.menu-primary-exit-active {
+  transform: translateX(-110%);
+  transition: all 500ms ease;
+}
+
+// /////////////////////////
+
+.menu-secondary-enter {
+  transform: translateX(110%);
+}
+
+.menu-secondary-enter-active {
+  transform: translateX(0%);
+  transition: all 500ms ease;
+}
+
+.menu-secondary-exit {
+}
+
+.menu-secondary-exit-active {
+  transform: translateX(110%);
+  transition: all 500ms ease;
+  // height: fit-content;
+}
+
+body::-webkit-scrollbar {
+  width: 12px; /* width of the entire scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+  background: rgb(85, 85, 85); /* color of the tracking area */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #ddd; /* color of the scroll thumb */
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 4px solid #ddd; /* creates padding around scroll thumb */
+}

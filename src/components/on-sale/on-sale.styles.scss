@@ -1,0 +1,126 @@
+.on-sale-card{
+    height: 300px;
+    width: auto;
+
+    transform:scale(1, 1);
+    transition: 0.0s;
+    // background-color: rgba(161, 161, 161, 0.548);
+
+    // background: rgba( 255, 255, 255, 0.5 );
+    // box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    // backdrop-filter: blur( 7.5px );
+    // -webkit-backdrop-filter: blur( 7.5px );
+    // border-radius: 10px;
+    // border: 1px solid rgba( 255, 255, 255, 0.18 );
+
+    background: rgba( 0, 0, 0, 0.55 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 10.5px );
+    -webkit-backdrop-filter: blur( 10.5px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+  
+    &:hover{
+    overflow: hidden;
+    transform: scale(1.00);
+    }
+}
+
+.on-sale-card-background{
+    // background: linear-gradient(to left, #4364F7, #2a2a72);
+    // background-color: #5a6169;
+    // background-image: linear-gradient(315deg, #000000 0%, #7f8c8d 90%);
+    height: inherit;
+    border-radius: inherit;
+    position: relative;
+}
+
+
+// /////////////////////////////////////////////////
+
+
+.on-sale-card-body{
+    height: 90%;
+    width: 100%;
+    position: absolute;
+    margin-top: 2.5%;
+
+    
+}
+
+.on-sale-title{
+    font-size: large;
+    font-weight: 500;
+    margin: 0px;
+    vertical-align: middle;
+}
+
+.on-sale-title-neumorph{
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+}
+
+.on-sale-carousel{
+    justify-content: baseline;
+    width: 100%;
+    height: 90%;
+    padding-top: 0.5rem;
+    // padding-bottom: 1rem;
+}
+
+
+.rec.rec-item-wrapper{
+    height: 13.5rem;
+    align-items: center;
+    padding: 0px 0px;
+}
+
+.on-sale-carousel.rec-pagination{
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+    // align-items: center;
+    // justify-content: center;
+}
+
+.rec.rec-pagination{
+    margin: 0px 0px 0px 0px;
+
+}
+
+.rec.rec-slider-container{
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
+
+.lcUbOd{    
+    background-color: #ffffff;
+}
+
+.rec.rec-arrow {
+    border-radius: 0;
+    background-color: #ffffff00;//#3a44a96b;
+    border: none;
+    box-shadow: none;
+    height: 50%;
+    width: 1%;
+
+}
+
+.rec.rec-dot{
+    border-radius: 1;
+}
+
+.rec-dot.rec-dot_active{
+    background-color: #ffffff;
+    box-shadow: none;
+}
+
+
+@media screen and (max-width: 1000px) {
+    .on-sale-card{
+        height: 200px;
+
+    }
+}

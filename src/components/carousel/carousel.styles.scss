@@ -1,0 +1,15 @@
+.carousel, .slide,
+.carousel .carousel-inner,
+.carousel .carousel-item,
+.carousel .carousel-item img,
+.carousel .carousel-control {
+  border-radius: 10px;
+  overflow: hidden;
+  // border: solid 0.1px #fff;
+}
+
+.promo-carousel{
+    width: 90%;
+    padding: 2% 0% 2% 0%;
+  
+}

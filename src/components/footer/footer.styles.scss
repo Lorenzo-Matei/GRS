@@ -1,0 +1,51 @@
+.footer-container{
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+
+    width: 90%;
+    margin: auto;
+    margin-top: 2%;
+
+    background: rgba(0, 0, 0, 0.55);
+    // box-shadow: 0 8px 32px 0 rgb(31 38 135 / 37%);
+    backdrop-filter: blur(10.5px);
+    -webkit-backdrop-filter: blur(10.5px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.footer-category{
+    width: 150px;
+    margin: 0;
+    padding: 10px 15px;
+}
+
+.footer-title{
+    color: #fff;
+    margin: auto;
+    font-size: medium;
+    font-weight: 500;
+}
+
+.footer-page{
+    color: #ddd;
+    font-size: small;
+    padding: 0px;
+    margin: 0px;
+    line-height: 1.4;
+}
+
+.footer-social-media-buttons{
+    padding: 15px;
+    margin: 3px;
+
+}
+
+.social-media-icon{
+    color: #ddd;
+}
+
+.footer-icons-payment{
+    color: #ddd;
+}

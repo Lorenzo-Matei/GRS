@@ -1,0 +1,57 @@
+.card{
+  transform:scale(1, 1);
+  transition: 0.5s;
+
+  &:hover{
+  overflow: hidden;
+  transform: scale(1.04);
+  }
+
+}
+
+.product-category-card {
+  align-items: center;
+  justify-content: center;
+}
+
+.card-image{
+  position: relative;
+  border-radius: inherit;
+  width: 100%;
+  height: 100%;
+}
+
+.card-title{
+  font-size: medium;
+  color: aliceblue;
+  text-align: center;
+  position: absolute; 
+
+}
+
+
+
+.card-subtitle{
+  color: aliceblue;
+  text-align: center;
+  position: absolute; 
+  top: 50%;
+  right: 50%;   
+}
+
+
+.card-body{
+  height: inherit;
+  width: inherit;
+  position: absolute;
+  text-align: center;
+}
+
+.text{
+  font-family: Comfortaa;
+  font-weight: 600;
+  font-size: large;
+  color: aliceblue;
+  padding: 25px;
+
+}

@@ -1,0 +1,111 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+  }
+  
+  :root {
+    --clr-primary: #e9ecef;  //#ee6352;
+    --clr-body: #e9ecef;
+    --clr-bg: #ddd;
+  }
+  //#212529
+  
+  .search.body {
+    // font-family: basic-sans, sans-serif;
+    // min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.125em;
+    // line-height: 1.6;
+    // color: var(--clr-body);
+    background: var(--clr-bg);
+
+  }
+  
+  .content {
+    // background: #007bff;
+    border-radius: 50px;
+    height: fit-content;
+    width: auto; //was originally 70 vw
+    // box-shadow: 0 0 3em rgba(0,0,0,.15);
+    position: relative;
+
+  }
+  
+  .search {
+    --size: 40px;
+    border: 1px solid #ffffff;
+    display: flex;
+    border-radius: 100px;
+    overflow: hidden;
+    font-size: 1.25em;
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+    // margin-left: auto;
+    transition: width 450ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    padding: 3px;
+  }
+  
+  .search__input {
+    border: 0;
+    padding: .25em 1em;
+    flex-grow: 1;
+    outline: 0;
+    z-index: 2;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: transparent;
+    opacity: 0;
+    cursor: pointer;
+    color: #e9ecef;
+  }
+  
+  .search__submit {
+    font-size: 1.0rem;
+    margin-left: auto;
+    background: 0;
+    border: 0;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 200ms ease-out;
+    width: calc(var(--size) - 10px);
+    height: calc(var(--size) - 10px);
+    color: var(--clr-body);
+  }
+  
+  .search:hover {
+    box-shadow: 0 0 5px var(--clr-primary);
+    width: 300px;
+    
+    .search__input {
+        color: #ffffff;
+        opacity: 1;
+        z-index: initial;
+        cursor: initial;
+        width: calc(100% - var(--size));
+    }
+    
+    .search__submit {
+        // background: var(--clr-primary);
+        background-color: #ffffff;
+        padding: 0px 0px 0px 0px;
+        // margin: 0px 10px 0px 0px; // swaps to right side of bar
+        box-shadow: 0 0 10px rgba(0,0,0,.15);
+        // transition: transform 500ms ease-out;
+      
+      &:hover,
+      &:focus {
+        outline: 0;
+        // transform: rotate(1turn);
+        box-shadow: 0 0 10px #e9ecef;
+      }
+      .fa-search{
+            color: #212529;
+      }
+    }
+  }
+

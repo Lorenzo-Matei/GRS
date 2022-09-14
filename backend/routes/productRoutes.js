@@ -16,6 +16,7 @@ productRouter.get(
   expressAsyncHandler(async (req, res) => {
     const categories = await Product.find().distinct("productCategory"); // finds distinct an unique categories without duplicates
     res.send(categories);
+    console.log("serverside Res: " + categories);
   })
 );
 

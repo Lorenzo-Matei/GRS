@@ -33,6 +33,9 @@ import PotsAndPans from "../../assets/images/new-arrivals/pot-and-pan-set.jpg";
 
 class NewArrivalSection extends React.Component {
   constructor() {
+    const cloudFrontDistributionDomain =
+      "https://dem6epkjrbcxz.cloudfront.net/test-products-images-nobg/";
+
     super();
     this.breakPoints = [
       { width: 157, itemsToShow: 1 },
@@ -45,62 +48,81 @@ class NewArrivalSection extends React.Component {
 
     this.state = {
       sections: [
-        // {
-        //   productName: 'Hobart Commercial Oven',
-        //   productImage: CommercialOven,
-        //   productRating: 4,
-        //   productPrice: "$5999.99",
-        //   id: 1,
-        // },
-        // {
-        //   productName: 'Mr.Clean Large Dishwasher',
-        //   productImage: DishWasher,
-        //   productRating: 3.7,
-        //   productPrice: "$979.99",
-        //   id: 2
-        // },
-        // {
-        //   productName: 'Wellington Double Doored Stainless Steel Industrial Fridge',
-        //   productImage: Fridge,
-        //   productRating: 5,
-        //   productPrice: "$2,479.99",
-        //   id: 3
-        // },
-        // {
-        //   productName: 'Sekura 12" Japanese Knife',
-        //   productImage: JapaneseKnife,
-        //   productRating: 5,
-        //   productPrice: "$299.99",
-        //   id: 4
-        // },
-        // {
-        //   productName: 'MaxWell 5-foot Kitchen Rack',
-        //   productImage: KitchenRack,
-        //   productRating: 3.3,
-        //   productPrice: "$255.99",
-        //   id: 5
-        // },
-        // {
-        //   productName: 'CuisinArt Stainless Steel Ladle',
-        //   productImage: Ladle,
-        //   productRating: 4.3,
-        //   productPrice: "$12.99",
-        //   id: 6
-        // },
-        // {
-        //   productName: 'MaMaMia Pizza Oven 5-foot',
-        //   productImage: PizzaOven,
-        //   productRating: 3.5,
-        //   productPrice: "$10,399.99",
-        //   id: 7
-        // },
-        // {
-        //   productName: 'MainStays Pots & Pans (set of 7)',
-        //   productImage: PotsAndPans,
-        //   productRating: 4,
-        //   productPrice: "$219.47",
-        //   id: 8
-        // },
+        {
+          productName: "Vulcan LG300 Fryer 40lb Natural Gas",
+          productImage: cloudFrontDistributionDomain + "vulcan-lg300.png",
+          productRating: 5,
+          productPrice: "$995",
+          id: 1,
+        },
+        {
+          productName:
+            "Vulcan 70 lb double fryer with Filter and Digital Controls Natural Gas",
+          productImage: cloudFrontDistributionDomain + "vulcan-2tr45df.png",
+          productRating: 4.7,
+          productPrice: "CALL",
+          id: 2,
+        },
+        {
+          productName: "Vulcan MSA Series Griddle 48 inch Natural Gas",
+          productImage: cloudFrontDistributionDomain + "vulcan-msa48.png",
+          productRating: 4.2,
+          productPrice: "CALL",
+          id: 3,
+        },
+        {
+          productName:
+            "Vulcan VACB Achiever Series Charbroiler 60 inch Natural Gas",
+          productImage: cloudFrontDistributionDomain + "vulcan-vacb60.png",
+          productRating: 5,
+          productPrice: "CALL",
+          id: 4,
+        },
+        {
+          productName: "Vulcan Endurance Series Range 36 inch 6 Burner",
+          productImage: cloudFrontDistributionDomain + "vulcan-36s6b.png",
+          productRating: 5,
+          productPrice: "CALL",
+          id: 5,
+        },
+        {
+          productName: "Vulcan MINI-JET Combi Oven 208V",
+          productImage: cloudFrontDistributionDomain + "vulcan-mini-jet.png",
+          productRating: 5,
+          productPrice: "CALL",
+          id: 6,
+        },
+        {
+          productName:
+            "Vulcan VP Series Proofing & Holding Cabinet 18 Pan 120V",
+          productImage: cloudFrontDistributionDomain + "vulcan-vp18.png",
+          productRating: 4.5,
+          productPrice: "CALL",
+          id: 7,
+        },
+        {
+          productName: "Vulcan VCRH Series Hot Plate 24 inch Natural Gas",
+          productImage: cloudFrontDistributionDomain + "vulcan-vcrh24.png",
+          productRating: 4,
+          productPrice: "CALL",
+          id: 8,
+        },
+        {
+          productName:
+            "Vulcan VC4 Series Convection Oven Single Deck Natural Gas",
+          productImage: cloudFrontDistributionDomain + "vulcan-vc4gd.png",
+          productRating: 4,
+          productPrice: "CALL",
+          id: 9,
+        },
+        {
+          productName:
+            "Vulcan VC5 Series Convection Oven Single Deck Natural Gas",
+          productImage: cloudFrontDistributionDomain + "vulcan-vc5gd.png",
+          productRating: 5,
+          productPrice: "CALL",
+          id: 10,
+        },
       ],
     };
   }
@@ -129,7 +151,7 @@ class NewArrivalSection extends React.Component {
               itemPadding={[0, 5]}
               outerSpacing={[15]}
             >
-              {/* {this.state.sections.map(
+              {this.state.sections.map(
                 ({
                   id,
                   productName,
@@ -145,8 +167,8 @@ class NewArrivalSection extends React.Component {
                     productPrice={productPrice}
                   />
                 )
-              )} */}
-              <h5 style={{ color: "#ddd" }}>Coming Soon</h5>
+              )}
+              {/* <h5 style={{ color: "#ddd" }}>Coming Soon</h5> */}
             </Carousel>
           </div>
         </Card>

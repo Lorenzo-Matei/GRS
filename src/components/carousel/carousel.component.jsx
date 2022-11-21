@@ -59,13 +59,7 @@ const CarouselItem = (
             alt="4th slide"
           />
         </div>
-        <div class="carousel-item">
-          <img
-            class="d-block w-100"
-            src={cloudFrontDistributionDomain + "hobart5.jpg"}
-            alt="5th slide"
-          />
-        </div>
+
         <div class="carousel-item">
           <img
             class="d-block w-100"

@@ -45,6 +45,7 @@
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
     "react-simple-star-rating": "^4.0.5",
+    "react-simple-tree-menu": "^1.1.18",
     "react-toastify": "^9.0.8",
     "react-transition-group": "^4.4.2",
     "react-treebeard": "^3.2.4",

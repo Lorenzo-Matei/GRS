@@ -90,3 +90,40 @@ ul,
 .active {
   display: block;
 }
+
+.rstm-search {
+  margin: 0.5rem 0px;
+  background-color: transparent;
+  border-radius: 7px;
+  border: bold 2px;
+  width: 90%;
+}
+.rstm-tree-item-group {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+.rstm-tree-item {
+  text-align: left;
+  display: -webkit-flex;
+  font-size: medium;
+  color: #fff;
+}
+
+.rstm-tree-item:hover {
+  display: -webkit-flex;
+  font-size: medium;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.135);
+}
+.rstm-tree-item:active {
+  display: -webkit-flex;
+  font-size: medium;
+  color: #fff;
+  background-color: rgba(221, 221, 221, 0.45);
+}
+
+.rstm-toggle-icon {
+  margin-left: -0.5rem;
+  padding-right: 0.5rem;
+}

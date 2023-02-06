@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef, useReducer } from "react";
 import { CSSTransition } from "react-transition-group";
 
-import { Button } from "shards-react";
+import { Button, Card, CardBody, Col, Row } from "shards-react";
 import { BsFilterCircle } from "react-icons/bs";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import LoadingPageAnimation from "../../components/loading-page-animation/loading-page-animation.component";
-// import ReactPaginate from "react-paginate";
-// import "bootstrap/dist/css/bootstrap.css";
-// import { Pagination, PaginationItem, PaginationLink } from "reactstrap";
+
 import ReactPaginate from "react-paginate";
 
 import ProductSearchFilters from "../../components/product-search-filters/product-search-filters.component";
@@ -18,9 +16,11 @@ import "./products-search-page.styles.scss";
 import axios from "axios";
 import { Helmet } from "react-helmet-async";
 import ErrorMessageBox from "../../components/error-message-box/error-message-box.component";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getError } from "../../util";
 import { toast } from "react-toastify";
+import TreeMenu from "react-simple-tree-menu";
+// import { Toast } from "react-toastify/dist/components";
 
 function getBrandLogo(cloudFront, brand) {
   brand = brand.toLowerCase();
@@ -45,7 +45,6 @@ function getBrandLogo(cloudFront, brand) {
       return "/assets/images/logos/wusthof.png";
   }
 }
-const changeIcon = (icon) => icon.classList.toggle(<IoIosCloseCircleOutline />);
 
 const ACTIONS = {
   FETCH_REQUEST: "FETCH_REQUEST",
@@ -54,222 +53,284 @@ const ACTIONS = {
 };
 
 const reducer = (state, action) => {
-  //state is the starting or default value of the state.  2nd param, action , is the action or function that changes the current state.
   switch (action.type) {
-    case ACTIONS.FETCH_REQUEST:
-      return { ...state, loading: true }; // ...state returns the previous state values. loading: true -> shows a loading message or animation
+    case "FETCH_REQUEST":
+      return { ...state, loading: true };
 
-    case ACTIONS.FETCH_SUCCESS:
-      return { ...state, loading: false, productsData: action.payload }; // 3rd param -  productsData: action.payload -> loads the productsData variable/state with data coming from the 'action'
+    case "FETCH_SUCCESS":
+      return {
+        ...state,
+        productsData: action.payload.products,
+        page: action.payload.page,
+        pages: action.payload.pages,
+        countProducts: action.payload.countProducts,
+        loading: false,
+      };
+    case "FETCH_FAIL":
+      return { ...state, loading: false, error: action.payload };
 
-    case ACTIONS.FETCH_FAILURE:
-      return { ...state, loading: false, error: action.payload }; //error returns the payload as a error message
+    default:
+      return state;
   }
 };
 
-//disabled as this is used for filters
-// const searchReducer = (state, action) => {
-//   switch (action.type) {
-//     case "FETCH_REQUEST":
-//       return { ...state, loading: true };
+const priceFiltersDict = [
+  {
+    name: "$1 to $50",
+    value: "1-50",
+  },
+  {
+    name: "$51 to $100",
+    value: "51-100",
+  },
+  {
+    name: "$101 to $200",
+    value: "101-200",
+  },
+  {
+    name: "$201 to $400",
+    value: "201-400",
+  },
+  {
+    name: "$401 to $800",
+    value: "401-800",
+  },
+  {
+    name: "$801 to $1600",
+    value: "801-1600",
+  },
+  {
+    name: "$1601 to $2500",
+    value: "1601-2500",
+  },
+  {
+    name: "$2501 to $4000",
+    value: "2501-4000",
+  },
+  {
+    name: "$4001 to $6000",
+    value: "4001-6000",
+  },
+  {
+    name: "$6001 to $8000",
+    value: "6001-8000",
+  },
+  {
+    name: "$8000+",
+    value: "8000-100000",
+  },
+];
 
-//     case "FETCH_SUCCESS":
-//       return {
-//         ...state,
-//         products: action.payload.products,
-//         page: action.payload.page,
-//         pages: action.payload.pages,
-//         countProducts: action.payload.countProducts,
-//         loading: false,
-//       };
-//     case "FETCH_FAIL":
-//       return { ...state, loading: false, error: action.payload };
+const ratingsFiltersDict = [
+  {
+    name: "4+ Stars",
+    rating: 4,
+  },
 
-//     default:
-//       return state;
-//   }
-// };
+  {
+    name: "3+ Stars",
+    rating: 3,
+  },
 
-function getFiles() {
-  // const files = [];
-  const files = process.env.PUBLIC_URL + "/products";
-  console.log("files:" + files);
-  // return files;
-}
+  {
+    name: "2+ Stars",
+    rating: 2,
+  },
+
+  {
+    name: "1+ Stars",
+    rating: 1,
+  },
+];
 
 const ProductSearchPage = () => {
   // const[filterMenuWidth, setFilterMenuWidth] = useState('3px');
-  const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [showFilterMenu, setShowFilterMenu] = useState(false); // T/F if filter is open
   const [filterMenuWidth, setFilterMenuWidth] = useState(0);
   const searchFilterRef = useRef(null);
+  {
+    window.scrollTo(0, 200);
+  }
 
   const [currentPage, setCurrentPage] = useState(0);
   const PER_PAGE = 16;
   const offset = currentPage * PER_PAGE;
   // const pageCount = Math.ceil(productsData.length / PER_PAGE);
 
-  // const currentPageData = productsData
-  //   .slice(offset, offset + PER_PAGE)
-  //   .map(({ thumburl }) => <img src={thumburl} />);
-  // const pageCount = Math.ceil(data.length / PER_PAGE);
+  ////////////////////////////////////////////////////////////////
+  // new filters code
+  const navigate = useNavigate();
+  const { search } = useLocation();
+  const searchParams = new URLSearchParams(search); // if url is /search/?category=shirts then searches for shirts
+  const category = searchParams.get("category") || "all"; //returns items in that category, otherwise return null or all items.
+  const query = searchParams.get("query") || "all";
+  const price = searchParams.get("price") || "all";
+  const rating = searchParams.get("rating") || "all";
+  const order = searchParams.get("order") || "newest";
+  const page = searchParams.get("page") || 1;
+  const brands = searchParams.get("brands") || "all";
+  const gasType = searchParams.get("gasType") || "all";
+  const phase = searchParams.get("phase") || "all";
+  const voltage = searchParams.get("voltage") || "all";
 
-  // const { state } = useContext(Store); //copied from product-page and removed dispatch as changes wont occur here
-  // const { cart } = state;
+  const subCategory = searchParams.get("subCategory") || "all";
+  const microCategory = searchParams.get("microCategory") || "all";
 
-  //hooks
-  const [{ loading, error, productsData }, dispatch] = useReducer(reducer, {
-    loading: true,
-    error: "",
-    productsData: [],
-  });
-  // 1st param - {loading, error, products} -> created a set of states within an object
-  // 2nd param, dispatch, is the different functions that will be passed through to manipulate the states in said object
-  //useReducer 1st param - reducer -> reducer is the function created outside of the component.
-  // useReducer 2nd param - {loading: true, error: '', products: [] -> these are the default or starting states of said object initialized in the first half
-
-  // const [productsData, setProducts] = useState([]); // useState() returns an array that contains variable and a function that return values in that variable ; in this case products
+  const [{ loading, error, productsData, pages, countProducts }, dispatch] =
+    useReducer(reducer, {
+      // default values are:
+      loading: true,
+      error: "",
+      // productsData: [],
+    });
 
   useEffect(() => {
-    //this hook does something everytime something rerenders -> ex. use types something/ click someting
     const fetchData = async () => {
-      //this is a async functinon that grabs products from backend
-
-      dispatch({ type: ACTIONS.FETCH_REQUEST });
-
       try {
-        //old
-        const result = await axios.get("/api/products"); //sends ajax request to the address specified- api
-        // this is address used in server.js
-        // const result = await axios.get("/api/products"); //sends ajax request to the address specified- api
-
-        dispatch({
-          type: ACTIONS.FETCH_SUCCESS,
-          payload: result.data,
-        });
-        window.scrollTo(0, 0);
+        const { data } = await axios.get(
+          // the encoder addresses the '&' being used as an escape character and then resulting in half the string missing
+          `/api/products/search?page=${page}&query=${query}&category=${encodeURIComponent(
+            category
+          )}&subCategory=${encodeURIComponent(
+            subCategory
+          )}&microCategory=${encodeURIComponent(
+            microCategory
+          )}&price=${price}&brands=${brands}&gasType=${gasType}&phase=${phase}&voltage=${voltage}&rating=${rating}&order=${order}`
+        );
+        dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (err) {
         dispatch({
-          type: ACTIONS.FETCH_FAIL,
-          payload: err.message,
+          type: "FETCH_FAIL",
+          payload: getError(error),
         });
       }
     };
     fetchData();
-  }, []);
-  // this secion is used for filters
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const { data } = await axios.get(
-  //         `/api/products/search?page=${page}&query=${query}&category=${category}&subCategory=${subCategory}&microCategory=${microCategory}&brand=${brand}&gasType=${gasType}&price=${price}&rating=${rating}&order=${order}`
-  //       );
-  //     } catch (err) {
-  //       dispatch({
-  //         type: "FETCH_FAIL",
-  //         payload: getError(error),
-  //       });
-  //     }
-  //   };
-  //   fetchData();
-  // }, [
-  //   page,
-  //   query,
-  //   category,
-  //   subCategory,
-  //   microCategory,
-  //   brand,
-  //   gasType,
-  //   price,
-  //   rating,
-  //   order,
-  // ]);
+  }, [
+    category,
+    subCategory,
+    microCategory,
+    error,
+    order,
+    page,
+    price,
+    brands,
+    gasType,
+    phase,
+    voltage,
+    query,
+    rating,
+  ]);
 
-  // const [categories, setCategories] = useState([]);
-  // useEffect(() => {
-  //   const fetchCategories = async () => {
-  //     try {
-  //       const { data } = await axios.get(`/api/products/categories`);
-  //       setCategories(data);
-  //     } catch (err) {
-  //       toast.error(getError(err));
-  //     }
-  //   };
-  //   fetchCategories();
-  // }, [dispatch]);
+  //tree menu categories getter below
+  const [categories2, setCategories2] = useState([]);
 
-  // const getFilterUrl = (filter) => {
-  //   const filterPage = filter.page || page;
-  //   const filterQuery = filter.query || query;
-  //   const filterCategory = filter.category || category;
-  //   const filterSubCategory = filter.subCategory || subCategory;
-  //   const filterBrand = filter.brand || brand;
-  //   const filterGasType = filter.gasType || gasType;
-  //   const filterRating = filter.rating || rating;
-  //   const filterPrice = filter.price || price;
-  //   const sortOrder = filter.order || order;
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await axios.get(`/api/products/categories2`);
+        setCategories2(data);
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    };
+    fetchCategories();
+  }, [dispatch]);
 
-  //   return `/search?category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
-  // };
+  const [brandsList, setBrandsList] = useState([]);
 
-  ///////////////////////////////////////////  old useEffect /////////////////////////////
-  // useEffect(() => {
-  //   //this hook does something everytime something rerenders -> ex. use types something/ click someting
-  //   const fetchData = async () => {
-  //     //this is a async functinon that grabs products from backend
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const { data } = await axios.get(`/api/products/brands`);
+        setBrandsList(data);
+        console.log("brands List: ", data);
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    };
+    fetchBrands();
+  }, [dispatch]);
 
-  //     dispatch({ type: ACTIONS.FETCH_REQUEST });
+  const [gastTypeList, setGasTypeList] = useState([]);
 
-  //     try {
-  //       //old
-  //       const result = await axios.get("/api/products"); //sends ajax request to the address specified- api
-  //       // this is address used in server.js
-  //       // const result = await axios.get("/api/products"); //sends ajax request to the address specified- api
+  useEffect(() => {
+    const fetchGasType = async () => {
+      try {
+        const { data } = await axios.get(`/api/products/gasType`);
+        setGasTypeList(data);
+        console.log("brands List: ", data);
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    };
+    fetchGasType();
+  }, [dispatch]);
 
-  //       dispatch({
-  //         type: ACTIONS.FETCH_SUCCESS,
-  //         payload: result.data,
-  //       });
-  //     } catch (err) {
-  //       dispatch({
-  //         type: ACTIONS.FETCH_FAIL,
-  //         payload: err.message,
-  //       });
-  //     }
-  //   };
+  const [phaseList, setPhaseList] = useState([]);
 
-  //   // setProducts(result.data); // sets state for products by grabbing 'data' from backend with the 'result' function
+  useEffect(() => {
+    const fetchPhases = async () => {
+      try {
+        const { data } = await axios.get(`/api/products/phase`);
+        setPhaseList(data);
+        console.log("phase List: ", data);
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    };
+    fetchPhases();
+  }, [dispatch]);
 
-  //   fetchData(); //now that we've define fetchData function we call it within the useEffect.
-  // }, []); // 2nd parameter - after the , - specifies when to to do it, in this case its after the first render and only do it once.
-  // // therefore useEffect will run this function after the 1st render of this component
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////
+  const [voltageList, setVoltageList] = useState([]);
 
-  // const navigate = useNavigate();
-  // const { search } = useLocation();
-  // const sp = new URLSearchParams(search); // search?category='insertCategoryHere'
+  useEffect(() => {
+    const fetchVoltages = async () => {
+      try {
+        const { data } = await axios.get(`/api/products/voltage`);
+        setVoltageList(data);
+        console.log("voltage List: ", data);
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    };
+    fetchVoltages();
+  }, [dispatch]);
 
-  // const query = sp.get("query") || "all";
+  const getFilterURL = (filter) => {
+    const filterPage = filter.page || page;
+    const filterCategory = filter.category || category;
+    const filterQuery = filter.query || query;
+    const filterRating = filter.rating || rating;
+    const filterPrice = filter.price || price;
+    const sortOrder = filter.order || order;
+    const filterBrands = filter.brands || brands;
+    const filterGasType = filter.gasType || gasType;
+    const filterPhase = filter.phase || phase;
+    const filterVoltage = filter.voltage || voltage;
 
-  // const category = sp.get("productCategory") || "all";
-  // const subCategory = sp.get("productSubCategory") || "all";
-  // const microCategory = sp.get("productMicroCategory") || "all";
+    const filterSubCategory = filter.subCategory || subCategory;
+    const filterMicroCategory = filter.microCategory || microCategory;
 
-  // const gasType = sp.get("gasType") || "all";
-  // const brand = sp.get("productBrand") || "all";
-  // const price = sp.get("price") || "all";
-  // const rating = sp.get("rating") || "all";
-  // const order = sp.get("order") || "all";
-  // const page = sp.get("page") || "1";
+    console.log("filter object: ", filter);
 
-  // const [{ loading, error, productsData, pages, countProducts }, dispatch] =
-  //   useReducer(searchReducer, {
-  //     loading: true,
-  //     error: "",
-  //   });
+    return `/search?category=${encodeURIComponent(
+      filterCategory
+    )}&subCategory=${encodeURIComponent(
+      filterSubCategory
+    )}&microCategory=${encodeURIComponent(
+      filterMicroCategory
+    )}&query=${filterQuery}&price=${filterPrice}&brands=${filterBrands}&gasType=${filterGasType}&phase=${filterPhase}&voltage=${filterVoltage}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
+  };
 
+  ///////////////////////////////////////////////////////////////////
   // ** gotta get props through to filters component
   function handlePageClick({ selected: selectedPage }) {
-    setCurrentPage(selectedPage);
+    navigate(
+      getFilterURL({
+        page: selectedPage + 1,
+      })
+    );
     window.scrollTo(0, 200);
   }
 
@@ -281,7 +342,47 @@ const ProductSearchPage = () => {
     }
   }
 
-  const pageCount = Math.ceil(productsData.length / PER_PAGE);
+  function getCategories(directory) {
+    const categorySplitList = directory.split("/", 3);
+    const listLength = categorySplitList.length;
+    var category = "all";
+    var subCategory = "all";
+    var microCategory = "all";
+    var params = {};
+
+    switch (listLength) {
+      case 1:
+        if (categorySplitList[0] === "all") {
+          params = { category, subCategory, microCategory };
+
+          return params;
+        } else {
+          category = categorySplitList[0];
+
+          params = { category, subCategory, microCategory };
+
+          return params;
+        }
+
+      case 2:
+        category = categorySplitList[0];
+        subCategory = categorySplitList[1];
+
+        params = { category, subCategory, microCategory };
+
+        return params;
+
+      case 3:
+        category = categorySplitList[0];
+        subCategory = categorySplitList[1];
+        microCategory = categorySplitList[2];
+        params = { category, subCategory, microCategory };
+
+        return params;
+    }
+  }
+
+  // const pageCount = Math.ceil(productsData.length / PER_PAGE);
   const cloudFrontDistributionInventoryDomain =
     "https://dem6epkjrbcxz.cloudfront.net/test-products-images-nobg/";
 
@@ -315,11 +416,353 @@ const ProductSearchPage = () => {
                 in={showFilterMenu}
                 timeout={0}
                 classNames="filter-menu"
-                unmountOnExit
+                // unmountOnExit
                 onEnter={() => setFilterMenuWidth(300)}
                 onExited={() => setFilterMenuWidth(0)}
               >
-                <ProductSearchFilters />
+                {/* <ProductSearchFilters /> */}
+                <Card className="search-filter-card">
+                  <CardBody className="search-filter-cardbody">
+                    <div>
+                      <Row>
+                        <Col md={12}>
+                          <div>
+                            {countProducts === 0 ? (
+                              <h5 id="filter-selection-statements">
+                                No Results
+                              </h5>
+                            ) : (
+                              <h5 id="filter-selection-statements">
+                                {countProducts} Results
+                              </h5>
+                            )}
+                            {query !== "all" && (
+                              <h5 id="filter-selection-statements">
+                                Searched: "{query}"
+                              </h5>
+                            )}
+                            {category !== "all" && (
+                              <h5 id="filter-selection-statements">
+                                Category: {category}
+                              </h5>
+                            )}
+                            {subCategory !== "all" && (
+                              <h5 id="filter-selection-statements">
+                                Subcategory: {subCategory}
+                              </h5>
+                            )}
+                            {microCategory !== "all" && (
+                              <h5 id="filter-selection-statements">
+                                `{">"}` {microCategory}
+                              </h5>
+                            )}
+                            {price !== "all" && (
+                              <h5 id="filter-selection-statements">
+                                Price: {price}
+                              </h5>
+                            )}
+                            {brands !== "all" && (
+                              <h5 id="filter-selection-statements">
+                                Brands: {brands}
+                              </h5>
+                            )}
+                            {gasType !== "all" && (
+                              <h5 id="filter-selection-statements">
+                                Gas Type: {gasType}
+                              </h5>
+                            )}
+                            {phase !== "all" && (
+                              <h5 id="filter-selection-statements">
+                                Phase: {phase}
+                              </h5>
+                            )}
+                            {voltage !== "all" && (
+                              <h5 id="filter-selection-statements">
+                                Voltage: {voltage}
+                              </h5>
+                            )}
+
+                            {query !== "all" ||
+                            category !== "all" ||
+                            brands !== "all" ||
+                            gasType !== "all" ||
+                            phase !== "all" ||
+                            voltage !== "all" ||
+                            // rating !== 'all' ||
+                            price !== "all" ? (
+                              <div>
+                                <Button
+                                  className="reset-filters-button"
+                                  outline
+                                  theme="danger"
+                                  onClick={() => navigate("/search")}
+                                >
+                                  Reset
+                                </Button>
+                                <hr className="hr" />
+                              </div>
+                            ) : null}
+                            {/* ^ this will remove all filters and return to search screen */}
+                          </div>
+                          <h5 id="filter-title">Sort By:</h5>
+                          <select
+                            className="filter-order-selection"
+                            value={order}
+                            onChange={(click) => {
+                              navigate(
+                                getFilterURL({
+                                  order: click.target.value,
+                                })
+                              );
+                            }}
+                          >
+                            <option value="relevant">Most Relevant</option>
+                            <option value="newest">Newest Arrivals</option>
+                            <option value="ascendingPrice">
+                              Price: Low to High
+                            </option>
+                            <option value="descendingPrice">
+                              Price: High to Low
+                            </option>
+                            {/* <option value="topRated">Highest Reviews</option> */}
+                          </select>
+                          <h5 id="filter-title">Category</h5>
+                          <div>
+                            <ul>
+                              <li>
+                                <TreeMenu
+                                  data={categories2}
+                                  onClickItem={({ key, label, ...props }) => {
+                                    const selectionData = getCategories(key);
+
+                                    navigate(
+                                      getFilterURL({
+                                        category: selectionData.category,
+                                        subCategory: selectionData.subCategory,
+                                        microCategory:
+                                          selectionData.microCategory,
+                                      })
+                                    );
+                                  }}
+                                ></TreeMenu>
+                              </li>
+                            </ul>
+                          </div>
+                          <h5 id="filter-title">Brands</h5>
+                          <div>
+                            <ul>
+                              <li className="filter-item">
+                                <Link
+                                  className={
+                                    "all" === brands
+                                      ? "font-weight-bold"
+                                      : "filter-item"
+                                  }
+                                  to={getFilterURL({ brands: "all" })}
+                                >
+                                  Any
+                                </Link>
+                              </li>
+
+                              {brandsList.map((brand) => (
+                                <li key={brand} className="filter-item">
+                                  <Link
+                                    to={getFilterURL({
+                                      brands: brand,
+                                    })}
+                                    className={
+                                      brand === brands
+                                        ? "font-weight-bold"
+                                        : "filter-item"
+                                    }
+                                  >
+                                    {brand}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <h5 id="filter-title">Gas Type</h5>
+                          <div>
+                            <ul>
+                              <li>
+                                <Link
+                                  className={
+                                    "all" === gasType
+                                      ? "font-weight-bold"
+                                      : "filter-item"
+                                  }
+                                  to={getFilterURL({ gasType: "all" })}
+                                >
+                                  Any
+                                </Link>
+                              </li>
+
+                              {gastTypeList.map((type) => (
+                                <li key={type}>
+                                  <Link
+                                    to={getFilterURL({
+                                      gasType: type,
+                                    })}
+                                    className={
+                                      type === gasType
+                                        ? "font-weight-bold"
+                                        : "filter-item"
+                                    }
+                                  >
+                                    {type}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <h5 id="filter-title">Phase</h5>
+                          <div>
+                            <ul>
+                              <li>
+                                <Link
+                                  className={
+                                    "all" === phase
+                                      ? "font-weight-bold"
+                                      : "filter-item"
+                                  }
+                                  to={getFilterURL({ phase: "all" })}
+                                >
+                                  Any
+                                </Link>
+                              </li>
+
+                              {phaseList.map((phaseItem) => (
+                                <li key={phaseItem}>
+                                  <Link
+                                    to={getFilterURL({
+                                      phase: phaseItem,
+                                    })}
+                                    className={
+                                      phaseItem === phase
+                                        ? "font-weight-bold"
+                                        : "filter-item"
+                                    }
+                                  >
+                                    {phaseItem}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <h5 id="filter-title">Voltage</h5>
+                          <div>
+                            <ul>
+                              <li>
+                                <Link
+                                  className={
+                                    "all" === voltage
+                                      ? "font-weight-bold"
+                                      : "filter-item"
+                                  }
+                                  to={getFilterURL({ voltage: "all" })}
+                                >
+                                  Any
+                                </Link>
+                              </li>
+
+                              {voltageList.map((voltageItem) => (
+                                <li key={voltageItem}>
+                                  <Link
+                                    to={getFilterURL({
+                                      voltage: voltageItem,
+                                    })}
+                                    className={
+                                      voltageItem === voltage
+                                        ? "font-weight-bold"
+                                        : "filter-item"
+                                    }
+                                  >
+                                    {voltageItem}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <h5 id="filter-title">Price</h5>
+                          <div>
+                            <ul>
+                              <li>
+                                <Link
+                                  className={
+                                    "all" === price
+                                      ? "font-weight-bold"
+                                      : "filter-item"
+                                  }
+                                  to={getFilterURL({ price: "all" })}
+                                >
+                                  Any
+                                </Link>
+                              </li>
+
+                              {priceFiltersDict.map((priceItem) => (
+                                <li key={price.value}>
+                                  <Link
+                                    to={getFilterURL({
+                                      price: priceItem.value,
+                                    })}
+                                    className={
+                                      priceItem.value === price
+                                        ? "font-weight-bold"
+                                        : "filter-item"
+                                    }
+                                  >
+                                    {priceItem.name}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          {/* <div>
+                            <h5>Customer Reviews</h5>
+                            <ul>
+                              <li
+                                className={
+                                  "all" === category ? "text-bold" : ""
+                                  }
+                                  to={getFilterURL({price: "all"})}
+                                >
+                                  Any
+                              </li>
+                              
+                              {ratingsFiltersDict.map((rating) => (
+                                <li key={rating.value}>
+                                  <Link
+                                    to={getFilterURL({rating: rating.value})}
+                                </li>
+                              ))}
+
+                              
+                            </ul>
+                          </div> */}
+                        </Col>
+                        <Col md={9}>
+                          {loading ? (
+                            <LoadingPageAnimation></LoadingPageAnimation>
+                          ) : error ? (
+                            <ErrorMessageBox variant="danger">
+                              {error}
+                            </ErrorMessageBox>
+                          ) : (
+                            <>
+                              {/* {productsData.length === 0 && (
+                                <ErrorMessageBox>No Products Found</ErrorMessageBox>
+                              )} */}
+                            </>
+                          )}
+                        </Col>
+                      </Row>
+                    </div>
+                  </CardBody>
+                </Card>
               </CSSTransition>
             </div>
           </div>
@@ -330,49 +773,66 @@ const ProductSearchPage = () => {
             ) : error ? (
               <ErrorMessageBox variant="danger">{error}</ErrorMessageBox> // if there is an 'error' then show the message
             ) : (
-              (getFiles(),
-              // otherwise show products
-              productsData.slice(offset, offset + PER_PAGE).map((product) => (
-                // productsData.slice(0, 3).map((product) => (
-                <ProductSearchItem
-                  key={product.slug}
-                  _id={product._id}
-                  slug={product.slug}
-                  name={
-                    product.productBrand +
-                    " " +
-                    product.productName +
-                    " " +
-                    product.modelVariant +
-                    " " +
-                    product.gasType +
-                    displayVoltage(product.voltage)
-                  }
-                  brand={product.productBrand}
-                  brandLogo={getBrandLogo(
-                    cloudFrontDistributionLogosDomain,
-                    product.productBrand
-                  )}
-                  // image={product.image}
-                  // image={`/assets/images/test-products-images-nobg/${product.images[0]}`}
-                  image={
-                    cloudFrontDistributionInventoryDomain + product.images[0]
-                  }
-                  // rating={product.rating}
-                  price={product.onlinePrice[0]}
-                  gasType={product.gasType}
-                  countInStock={product.inStock}
-                />
-              )))
+              <>
+                {productsData.length === 0 && (
+                  <ErrorMessageBox>No Products Found</ErrorMessageBox>
+                )}
+
+                {productsData.map((product) => (
+                  <ProductSearchItem
+                    key={product.slug}
+                    _id={product._id}
+                    slug={product.slug}
+                    name={
+                      product.productBrand +
+                      " " +
+                      product.productName +
+                      " " +
+                      product.modelVariant +
+                      " " +
+                      product.gasType +
+                      displayVoltage(product.voltage)
+                    }
+                    brand={product.productBrand}
+                    brandLogo={getBrandLogo(
+                      cloudFrontDistributionLogosDomain,
+                      product.productBrand
+                    )}
+                    // image={product.image}
+                    // image={`/assets/images/test-products-images-nobg/${product.images[0]}`}
+                    image={
+                      cloudFrontDistributionInventoryDomain + product.images[0]
+                    }
+                    // rating={product.rating}
+                    price={product.onlinePrice[0]}
+                    gasType={product.gasType}
+                    countInStock={product.inStock}
+                  />
+                ))}
+              </>
             )}
           </div>
         </div>
       </div>
       <div className="search-page-pagination-container">
+        {/* <Row md={10}>
+          {[...Array(pages).keys()].map((x) => (
+            <Col>
+              <Link
+                className={x + 1 === page ? "active" : ""}
+                key={x + 1}
+                to={getFilterURL({ page: x + 1 })}
+              >
+                <Button className="pagination-buttons">{x + 1}</Button>
+              </Link>
+            </Col>
+          ))}
+        </Row> */}
+
         <ReactPaginate
           previousLabel={"← Previous"}
           nextLabel={"Next →"}
-          pageCount={pageCount}
+          pageCount={pages}
           onPageChange={handlePageClick}
           containerClassName={"pagination"}
           previousLinkClassName={"pagination__link"}
@@ -380,17 +840,6 @@ const ProductSearchPage = () => {
           disabledClassName={"pagination__link--disabled"}
           activeClassName={"pagination__link--active"}
         />
-        {/* <ReactPaginate
-          className="search-page-pagination-component"
-          id="container"
-          breakLabel="..."
-          nextLabel="next >"
-          // onPageChange=
-          pageRangeDisplayed={5}
-          pageCount={10}
-          previousLabel="< previous"
-          renderOnZeroPageCount={null}
-        /> */}
       </div>
     </div>
   );

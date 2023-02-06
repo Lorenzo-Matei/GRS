@@ -20,18 +20,8 @@ import TreeMenu from "react-simple-tree-menu";
 // furthermore, under the category menu, the children of that category will be available to further click.
 // refer to https://community.algolia.com/instantsearch.js/v1/examples/e-commerce/ for example
 
-var toggler = document.getElementsByClassName("caret");
-var i;
-
-for (i = 0; i < toggler.length; i++) {
-  toggler[i].addEventListener("click", function () {
-    this.parentElement.querySelector(".nested").classList.toggle("active");
-    this.classList.toggle("caret-down");
-  });
-}
-
 const CategoriesFilter = () => {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState({});
   const [categoryFilter, setCategoryFilter] = useState("");
 
   useEffect(() => {
@@ -48,79 +38,9 @@ const CategoriesFilter = () => {
     //
     //
     fetchCategories();
+    // productCategories();
   }, []);
 
-  const productCategories = async () => {
-    const categoriesData = await axios.get(`/api/categories`);
-    setCategories(categoriesData.data);
-    console.log("axios data: " + categoriesData.data);
-  };
-
-  const treeData = {
-    Cooking: {
-      // key
-      label: "Cooking",
-      // index: 0, // decide the rendering order on the same level
-      nodes: {
-        Broilers: {
-          label: "Broilers",
-          // index: 0,
-        },
-        Charbroilers: {
-          label: "Charbroilers",
-          // index: 1,
-        },
-        Fryers: {
-          label: "Fryers",
-          // index: 2,
-        },
-        Griddles: {
-          label: "Griddles",
-          // index: 3,
-        },
-        HeatedHoldingAndProofers: {
-          label: "Heated Holding & Proofers",
-          // index: 3,
-        },
-        Hotplates: {
-          label: "Hotplates",
-          // index: 3,
-        },
-        Kettles: {
-          label: "Kettles",
-          // index: 3,
-        },
-        Ovens: {
-          label: "Ovens",
-          // index: 3,
-        },
-        Ranges: {
-          label: "Ranges",
-          // index: 3,
-        },
-        Steamers: {
-          label: "Steamers",
-          // index: 3,
-        },
-        StockpotRanges: {
-          label: "Stockpot Ranges",
-          // index: 3,
-        },
-      },
-    },
-
-    "Warewashing, Sinks & Plumbing": {
-      label: "Warewashing, Sinks & Plumbing",
-      nodes: {
-        WaterFilters: {
-          label: "Water Filters",
-          // index: 0,
-        },
-      },
-    },
-  };
-
-  const testCategories = ["Cookings", "Warewashing, Sinks & Plumbing"];
   return (
     <div className="collapsible-filter-container">
       <Collapsible
@@ -131,21 +51,41 @@ const CategoriesFilter = () => {
         }
         className="categories-collapsible"
       >
-        {/* <ul>
-          {categories?.map((category) => (
-            <li key={category} className="li-category">
-              {category}
-            </li>
-          ))}
-        </ul> */}
+        <Nav className="nav-categories">
+          <NavItem>
+            <TreeMenu
+              data={categories}
+              onClickItem={({ key, label, ...props }) => {
+                <Link to={`/home`}></Link>;
+                // <NavLink href="/test-category"></NavLink>;
+                alert(`/category/${key}`);
+                // setCategoryFilter(label);
+              }}
+            >
+              {/* <Link to=""></Link> */}
+            </TreeMenu>
+          </NavItem>
+        </Nav>
 
-        <TreeMenu
-          data={treeData}
-          onClickItem={({ key, label, ...props }) => {
-            // alert(label);
-            setCategoryFilter(label);
-          }}
-        ></TreeMenu>
+        {/* <Nav>
+          <NavItem>
+            <TreeMenu
+              // data={treeData}
+              data={categories}
+              onClickItem={({ key, label, ...props }) => {
+                <NavItem key={key}>
+                  <NavLink
+                    to={`/search?category=${key}`}
+                    onClick={() => alert("link clicked")}
+                  ></NavLink>
+                </NavItem>;
+
+                // alert(key);
+                // setCategoryFilter(label);
+              }}
+            ></TreeMenu>
+          </NavItem>
+        </Nav> */}
       </Collapsible>
     </div>
   );

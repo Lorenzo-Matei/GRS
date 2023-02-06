@@ -37,23 +37,6 @@
 }
 //////////////////////////////////////////////////////////////////////
 
-// .search-filter-container-test{
-//     display: flex;
-//     align-items: center;
-
-//     position: absolute;
-//     height: 100%;
-//     max-height: 610px;
-//     left: 2%;
-//     border: 1px solid #ddd;
-//     border-radius: 20px;
-//     // margin: 0px 15px;
-//     // background-color: #ddd;
-
-//     z-index: 20;
-
-// }
-
 .filter-open-button {
   position: absolute;
   // right: -17px;
@@ -185,4 +168,44 @@
 .pagination__link--disabled a {
   color: rgb(198, 197, 202);
   border: 1px solid rgb(198, 197, 202);
+}
+
+.filter-order-selection {
+  width: 85%;
+  color: #ddd;
+  background-color: transparent;
+  border-radius: 7px;
+  border: #ddd solid 1px;
+  // border-style: solid 1px white;
+}
+
+.rstm-tree-item-level0 {
+  padding-left: 0rem !important;
+}
+
+.rstm-tree-item-level0 {
+  padding-left: 0rem !important;
+}
+
+.rstm-toggle-icon {
+  padding-right: 2rem !important;
+}
+
+.filter-item {
+  color: #ddd;
+}
+
+#filter-selection-statements {
+  font-size: small;
+  color: #ddd;
+}
+
+.pagination-buttons {
+  border-radius: 10px;
+  background-color: transparent;
+  border: solid 1px #ddd;
+}
+#filter-title {
+  color: #ddd;
+  font-weight: 500;
 }

@@ -28,7 +28,6 @@ import { IoStorefrontSharp } from "react-icons/io5";
 
 import "./navbar-floating.styles.scss";
 import ExpandingSearchBox from "../expanding-search-box/expanding-search-box.component";
-import Logo from "../../assets/images/misc/store_logo.png";
 import NewArrivalItem from "../new-arrivals/new-arrivals-item.component";
 import NavItemDropdown from "../NavItemDropdown/nav-item-dropdown.component.jsx";
 import NavDropdownMenu from "../nav-dropdown-menu/nav-dropdown-menu.component.jsx";
@@ -36,7 +35,8 @@ import { Link } from "react-router-dom";
 import { Store } from "../../Store";
 import NavDropdownUser from "../nav-dropdown-user/nav-dropdown-user.component";
 import NavItemDropdownUser from "../nav-item-dropdown-user/nav-item-dropdown-user.component";
-
+const cloudFrontDistributionLogosDomain =
+  "https://dem6epkjrbcxz.cloudfront.net/logos/";
 const NavBarFloating = () => {
   const { state } = useContext(Store); //copied from product-page and removed dispatch as changes wont occur here
   const { cart, userInfo } = state;
@@ -63,7 +63,10 @@ const NavBarFloating = () => {
   return (
     <div className="navbar-div">
       <div className="logo-img-container">
-        <img src={Logo} className="m-auto logo-img" />
+        <img
+          src={cloudFrontDistributionLogosDomain + "grs_logo.png"}
+          className="m-auto logo-img"
+        />
       </div>
 
       <Card className="m-auto navbar-card">
@@ -84,7 +87,7 @@ const NavBarFloating = () => {
                 </Link>
               </NavItem>
               {/* ////////////////////////////////////////////// */}
-              <NavItem>
+              {/* <NavItem>
                 <Link to="/products">
                   <button
                     type="button"
@@ -94,7 +97,7 @@ const NavBarFloating = () => {
                     Products
                   </button>
                 </Link>
-              </NavItem>
+              </NavItem> */}
               {/* /////////////////////////////////////////////// */}
               <NavItemDropdown>
                 <NavDropdownMenu />

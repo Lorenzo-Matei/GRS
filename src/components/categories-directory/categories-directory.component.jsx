@@ -1,9 +1,25 @@
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardBody, CardImgOverlay } from "shards-react";
 import "./categories-directory.styles.scss";
 
 const cloudFrontMiscImages = "https://dem6epkjrbcxz.cloudfront.net/misc/";
 
 function CategoriesDirectory() {
+  const navigate = useNavigate();
+  const { search } = useLocation();
+  const searchParams = new URLSearchParams(search); // if url is /search/?category=shirts then searches for shirts
+  const category = searchParams.get("category") || "all"; //returns items in that category, otherwise return null or all items.
+  const subCategory = searchParams.get("subCategory") || "all";
+  const microCategory = searchParams.get("microCategory") || "all";
+
+  const getFilterURL = (filter) => {
+    const filterCategory = filter.category || category;
+
+    return `/search?category=${encodeURIComponent(
+      filterCategory
+    )}&subCategory=all&microCategory=all&query=all&price=all&rating=all&order=all&page=1`;
+  };
+
   const categories = [
     {
       id: 1,
@@ -67,25 +83,38 @@ function CategoriesDirectory() {
 
   const CategoryCard = (props) => {
     return (
-      <Card className="category-card">
-        <CardImgOverlay />
+      <Link
+        className="category-card"
+        to={getFilterURL({
+          category: props.title,
+        })}
+      >
+        <Card className="category-card">
+          <CardImgOverlay />
 
-        <img className="category-image" src={props.imageURL}></img>
+          <img className="category-image" src={props.imageURL}></img>
 
-        <CardBody className="category-cardbody">
-          <h6 className="category-card-title"> {props.title}</h6>
-        </CardBody>
-      </Card>
+          <CardBody className="category-cardbody">
+            <h6 className="category-card-title"> {props.title}</h6>
+          </CardBody>
+        </Card>
+      </Link>
     );
   };
 
   function categoryCards(categories) {
     return categories.map((category) => (
+      // <Link
+      //   to={getFilterURL({
+      //     category: category.title,
+      //   })}
+      // >
       <CategoryCard
         key={category.id}
         title={category.title}
         imageURL={category.imageUrl}
       />
+      //</Link>
     ));
   }
 

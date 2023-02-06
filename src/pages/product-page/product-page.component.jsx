@@ -293,6 +293,14 @@ function ProductPage() {
       );
     }
   }
+
+  function callForPriceCheck(price) {
+    if (price == 0.0) {
+      return "Call For Price";
+    } else {
+      return "$ " + price;
+    }
+  }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////   copied from products-page-component  //////////////////////////
@@ -394,7 +402,7 @@ function ProductPage() {
           </Badge> */}
 
           <h3 id="product-page-price">
-            $ {productData.onlinePrice[0].toFixed(2)}
+            {callForPriceCheck(productData.onlinePrice[0].toFixed(2))}
           </h3>
 
           <Button

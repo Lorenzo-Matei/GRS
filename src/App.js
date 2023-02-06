@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -29,6 +29,7 @@ import Footer from "./components/footer/footer.component";
 import ProductPage from "./pages/product-page/product-page.component";
 import { Alert } from "shards-react";
 import { AiFillWarning } from "react-icons/ai";
+import ExpandingSearchBox from "./components/expanding-search-box/expanding-search-box.component";
 
 const App = () => {
   return (
@@ -48,11 +49,11 @@ const App = () => {
       />
       <Router>
         <NavbarFloating />
-        <Alert theme="danger" className="maintenance-alert">
+        <Alert theme="warning" className="maintenance-alert">
           <AiFillWarning />
-          {"  "} Our Site is under maintenance and many features will be
-          unavailable - use Desktop for best Viewing. Please click "Products"
-          above to view our selection. For now call for Orders.{"  "}
+          {"  "} Our site is undergoing changes - please use desktop for best
+          Viewing. Due to a rapidly changing market - please call for pricing
+          and ordering.{"  "}
           <AiFillWarning />
         </Alert>
         <Routes>
@@ -60,12 +61,18 @@ const App = () => {
           <Route path="/products" element={<ProductSearchPage />} />
           <Route path="/products/:slug" element={<ProductPage />} />{" "}
           {/* :slug    is a parameter/argument/variable that is inserted from the product slug */}
+          <Route path="/search" element={<ProductSearchPage />} />
           <Route path="/shop" element={<ProductListingsPage />} />
           <Route path="/showroom" element={<Showroom />} />
           <Route path="/contact-us" element={<ContactPage />} />
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/search" element={<SearchPage />} />
+          <Route path="/cart:id" element={<CartPage />} />
+          {/* <Route
+            render={({ history }) => (
+              <ExpandingSearchBox history={history}></ExpandingSearchBox>
+            )}
+          /> */}
         </Routes>
         <Footer />
       </Router>

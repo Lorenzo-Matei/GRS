@@ -52,7 +52,7 @@ class NewArrivalSection extends React.Component {
           productName: "Vulcan LG300 Fryer 40lb Natural Gas",
           productImage: cloudFrontDistributionDomain + "vulcan-lg300.png",
           productRating: 5,
-          productPrice: "$995",
+          productPrice: "CALL",
           id: 1,
         },
         {

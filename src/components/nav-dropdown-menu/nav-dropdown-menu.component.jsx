@@ -13,6 +13,8 @@ import {
   GiTable,
   GiChemicalTank,
 } from "react-icons/gi";
+import { IoStorefrontSharp } from "react-icons/io5";
+
 import { MdOutlineMicrowave } from "react-icons/md";
 import { BsCupStraw } from "react-icons/bs";
 import { FaSink } from "react-icons/fa";
@@ -24,11 +26,37 @@ import {
   FaRegArrowAltCircleLeft,
   FaRegArrowAltCircleRight,
 } from "react-icons/fa";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import OutsideClickHandler from "react-outside-click-handler";
+
+var categoriesSelected = [];
 
 function NavDropdownMenu() {
   const [activeMenu, setActiveMenu] = useState("main");
   const [menuHeight, setMenuHeight] = useState(null);
   const dropdownRef = useRef(null);
+
+  const navigate = useNavigate();
+  const { search } = useLocation();
+  const searchParams = new URLSearchParams(search); // if url is /search/?category=shirts then searches for shirts
+  const category = searchParams.get("category") || "all"; //returns items in that category, otherwise return null or all items.
+  const subCategory = searchParams.get("subCategory") || "all";
+  const microCategory = searchParams.get("microCategory") || "all";
+
+  const getFilterURL = (filter) => {
+    const filterCategory = filter.category || category;
+    const filterSubCategory = filter.subCategory || subCategory;
+    const filterMicroCategory = filter.microCategory || microCategory;
+
+    return `/search?category=${encodeURIComponent(
+      filterCategory
+    )}&subCategory=${encodeURIComponent(
+      filterSubCategory
+    )}&microCategory=${encodeURIComponent(
+      filterMicroCategory
+    )}&query=all&price=all&rating=all&order=all&page=1`;
+  };
 
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.offsetHeight);
@@ -39,11 +67,50 @@ function NavDropdownMenu() {
     setMenuHeight(height);
   }
 
+  function menuPageNavigation() {
+    var categoriesLen = categoriesSelected.length;
+
+    function allProductsCheck(string) {
+      if (string.toLowerCase().includes("all ")) {
+        return "all";
+      } else {
+        return string;
+      }
+    }
+
+    switch (categoriesLen) {
+      case 1:
+        return navigate(
+          getFilterURL({ category: allProductsCheck(categoriesSelected[0]) })
+        );
+
+      case 2:
+        return navigate(
+          getFilterURL({
+            category: allProductsCheck(categoriesSelected[0]),
+            subCategory: allProductsCheck(categoriesSelected[1]),
+          })
+        );
+    }
+  }
+
   function DropDownItem(props) {
     return (
       <a
         className="menu-item"
-        onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}
+        onClick={() => {
+          props.goToMenu && setActiveMenu(props.goToMenu);
+
+          if (props.goToMenu && props.goToMenu != "main") {
+            categoriesSelected.push(props.goToMenu);
+          } else if (!props.goToMenu) {
+            categoriesSelected.push(props.menuItem);
+            menuPageNavigation();
+            categoriesSelected.pop();
+          } else if (props.goToMenu == "main") {
+            categoriesSelected = [];
+          }
+        }} // props exist then setActive menu
       >
         <span className="icon-button">{props.leftIcon}</span>
         {props.children}
@@ -54,862 +121,512 @@ function NavDropdownMenu() {
 
   return (
     // <div className="dropdown-container">
-    <div
-      className="dropdown"
-      style={{ height: menuHeight + 25 }}
-      ref={dropdownRef}
+    <OutsideClickHandler
+      onOutsideClick={() => {
+        categoriesSelected = [];
+      }}
     >
-      <CSSTransition
-        in={activeMenu === "main"}
-        unmountOnExit
-        timeout={500}
-        classNames="menu-primary"
-        onEnter={calcHeight}
+      <div
+        className="dropdown"
+        style={{ height: menuHeight + 25 }}
+        ref={dropdownRef}
       >
-        {/* {categories.map((category) => (
+        <CSSTransition
+          in={activeMenu === "main"}
+          unmountOnExit
+          timeout={500}
+          classNames="menu-primary"
+          onEnter={calcHeight}
+        >
+          {/* {categories.map((category) => (
           <DropDownItem key={category}></DropDownItem>
         ))} */}
 
-        <div className="menu">
-          <DropDownItem
-            leftIcon={<GiCampCookingPot />}
-            rightIcon={<FaRegArrowAltCircleRight />}
-            goToMenu="Cooking"
-          >
-            Cooking
-          </DropDownItem>
+          <div className="menu">
+            <Link to={getFilterURL({ category: "all", subCategory: "all" })}>
+              <DropDownItem leftIcon={<IoStorefrontSharp />}>
+                All Products
+              </DropDownItem>
+            </Link>
+            <DropDownItem
+              leftIcon={<GiCampCookingPot />}
+              rightIcon={<FaRegArrowAltCircleRight />}
+              menuItem="Cooking"
+              goToMenu="Cooking"
+            >
+              Cooking
+            </DropDownItem>
 
-          <DropDownItem
-            leftIcon={<CgSmartHomeRefrigerator />}
-            rightIcon={<FaRegArrowAltCircleRight />}
-            goToMenu="Refrigeration"
-          >
-            Refrigeration
-          </DropDownItem>
+            <DropDownItem
+              leftIcon={<CgSmartHomeRefrigerator />}
+              rightIcon={<FaRegArrowAltCircleRight />}
+              menuItem="Refrigeration"
+              goToMenu="Refrigeration"
+            >
+              Refrigeration
+            </DropDownItem>
 
-          <DropDownItem
-            leftIcon={<GiManualMeatGrinder />}
-            rightIcon={<FaRegArrowAltCircleRight />}
-            goToMenu="Food Preparation"
-          >
-            Food Preparation
-          </DropDownItem>
+            <DropDownItem
+              leftIcon={<GiManualMeatGrinder />}
+              rightIcon={<FaRegArrowAltCircleRight />}
+              menuItem="Food Preparation"
+              goToMenu="Food Preparation"
+            >
+              Food Preparation
+            </DropDownItem>
 
-          <DropDownItem
-            leftIcon={<BsCupStraw />}
-            rightIcon={<FaRegArrowAltCircleRight />}
-            goToMenu="Beverage, Food Display & Warmers"
-          >
-            Beverage, Food Display & Warmers
-          </DropDownItem>
+            <DropDownItem
+              leftIcon={<BsCupStraw />}
+              rightIcon={<FaRegArrowAltCircleRight />}
+              menuItem="Beverage, Food Display & Warmers"
+              goToMenu="Beverage, Food Display & Warmers"
+            >
+              Beverage, Food Display & Warmers
+            </DropDownItem>
 
-          <DropDownItem
-            leftIcon={<FaSink />}
-            rightIcon={<FaRegArrowAltCircleRight />}
-            goToMenu="WareWashing, Sinks & Plumbing"
-          >
-            WareWashing, Sinks & Plumbing
-          </DropDownItem>
+            <DropDownItem
+              leftIcon={<FaSink />}
+              rightIcon={<FaRegArrowAltCircleRight />}
+              menuItem="Warewashing, Sinks & Plumbing"
+              goToMenu="Warewashing, Sinks & Plumbing"
+            >
+              Warewashing, Sinks & Plumbing
+            </DropDownItem>
 
-          <DropDownItem
-            leftIcon={<GiTable />}
-            rightIcon={<FaRegArrowAltCircleRight />}
-            goToMenu="Tables, Shelves & Furniture"
-          >
-            Tables, Shelves & Furniture
-          </DropDownItem>
+            <DropDownItem
+              leftIcon={<GiTable />}
+              rightIcon={<FaRegArrowAltCircleRight />}
+              menuItem="Tables, Shelves & Furniture"
+              goToMenu="Tables, Shelves & Furniture"
+            >
+              Tables, Shelves & Furniture
+            </DropDownItem>
 
-          <DropDownItem
-            leftIcon={<GiChemicalTank />}
-            rightIcon={<FaRegArrowAltCircleRight />}
-            goToMenu="Janitorial & Chemicals"
-          >
-            Janitorial & Chemicals
-          </DropDownItem>
+            <DropDownItem
+              leftIcon={<GiChemicalTank />}
+              rightIcon={<FaRegArrowAltCircleRight />}
+              menuItem="Janitorial & Chemicals"
+              goToMenu="Janitorial & Chemicals"
+            >
+              Janitorial & Chemicals
+            </DropDownItem>
 
-          <DropDownItem
-            leftIcon={<GiClothes />}
-            rightIcon={<FaRegArrowAltCircleRight />}
-            goToMenu="Clothing"
-          >
-            Clothing
-          </DropDownItem>
+            <DropDownItem
+              leftIcon={<GiClothes />}
+              rightIcon={<FaRegArrowAltCircleRight />}
+              menuItem="Clothing"
+              goToMenu="Clothing"
+            >
+              Clothing
+            </DropDownItem>
 
-          <DropDownItem
-            leftIcon={<ImSpoonKnife />}
-            rightIcon={<FaRegArrowAltCircleRight />}
-            goToMenu="Tabletop & Service"
-          >
-            Tabletop & Service
-          </DropDownItem>
+            <DropDownItem
+              leftIcon={<ImSpoonKnife />}
+              rightIcon={<FaRegArrowAltCircleRight />}
+              menuItem="Tabletop & Service"
+              goToMenu="Tabletop & Service"
+            >
+              Tabletop & Service
+            </DropDownItem>
 
-          <DropDownItem
-            leftIcon={<RiKnifeLine />}
-            rightIcon={<FaRegArrowAltCircleRight />}
-            goToMenu="Smallwares"
-          >
-            Smallwares
-          </DropDownItem>
-        </div>
-      </CSSTransition>
+            <DropDownItem
+              leftIcon={<RiKnifeLine />}
+              rightIcon={<FaRegArrowAltCircleRight />}
+              menuItem="Smallwares"
+              goToMenu="Smallwares"
+            >
+              Smallwares
+            </DropDownItem>
+          </div>
+        </CSSTransition>
 
-      {/* //////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
-      <CSSTransition
-        in={activeMenu === "Cooking"}
-        unmountOnExit
-        timeout={500}
-        classNames="menu-secondary"
-        onEnter={calcHeight}
-      >
-        <div className="menu">
-          <DropDownItem
-            leftIcon={<FaRegArrowAltCircleLeft />}
-            goToMenu="main"
-          />
+        {/* //////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+        <CSSTransition
+          in={activeMenu === "Cooking"}
+          unmountOnExit
+          timeout={500}
+          classNames="menu-secondary"
+          onEnter={calcHeight}
+        >
+          <div className="menu">
+            <DropDownItem
+              leftIcon={<FaRegArrowAltCircleLeft />}
+              goToMenu="main"
+              menuItem="menu-back"
+            />
+            <DropDownItem menuItem="all">All</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Fryers
-          </DropDownItem>
+            <DropDownItem menuItem="Fryers">Fryers</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Charbroilers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Griddles
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Hotplates
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Ranges
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Broilers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Stockpot
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Ovens
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Rotisseries
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Gyros & Shawarma Machines
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Smokers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Kettles
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Steamers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Heated Holding & Proofers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Toasters
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Panini Presses
-          </DropDownItem>
+            <DropDownItem menuItem="Charbroilers">Charbroilers</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Rice Cookers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Crepe & Waffle Machines
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Gas Lines
-          </DropDownItem>
-        </div>
-      </CSSTransition>
-      {/* //////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+            <DropDownItem menuItem="Griddles">Griddles</DropDownItem>
 
-      <CSSTransition
-        in={activeMenu === "Refrigeration"}
-        unmountOnExit
-        timeout={500}
-        classNames="menu-secondary"
-        onEnter={calcHeight}
-      >
-        <div className="menu">
-          <DropDownItem
-            leftIcon={<FaRegArrowAltCircleLeft />}
-            goToMenu="main"
-          />
+            <DropDownItem menuItem="Hotplates">Hotplates</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Upright Coolers
-          </DropDownItem>
+            <DropDownItem menuItem="Ranges">Ranges</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Upright Freezers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Worktop & Undercounter Coolers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Worktop & Undercounter Freezers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Back Bar Coolers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Sandwich Prep Tables
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Pizza Prep Tables
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Chef Bases
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Ice Machines
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Blast Freezers & Chillers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Display Cases
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Ice Cream
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Walk-in Coolers & Freezers
-          </DropDownItem>
-        </div>
-      </CSSTransition>
-      {/* ////////////////////////////////////////////////////////////////////////////////////////////// */}
+            <DropDownItem menuItem="Broilers">Broilers</DropDownItem>
+            <DropDownItem menuItem="Stockpot Ranges">
+              Stockpot Ranges
+            </DropDownItem>
 
-      <CSSTransition
-        in={activeMenu === "Food Preparation"}
-        unmountOnExit
-        timeout={500}
-        classNames="menu-secondary"
-        onEnter={calcHeight}
-      >
-        <div className="menu">
-          <DropDownItem
-            leftIcon={<FaRegArrowAltCircleLeft />}
-            goToMenu="main"
-          />
+            <DropDownItem menuItem="Ovens">Ovens</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Meat Grinders
-          </DropDownItem>
+            <DropDownItem menuItem="Kettles">Kettles</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Meat Saw
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Meat Tenderizers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Sausage Stuffers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Meat & Deli Slicers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Planetary Mixers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Dough Sheeters, Cutters & Presses
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Scales
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Salad Dryers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Automatic Peelers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Food Processors
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Blenders
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Immersion Blenders
-          </DropDownItem>
+            <DropDownItem menuItem="Steamers">Steamers</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Juicers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Food Cutters
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Can Openers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Mobile Food Racks
-          </DropDownItem>
-        </div>
-      </CSSTransition>
+            <DropDownItem menuItem="Heated Holding & Proofers">
+              Heated Holding & Proofers
+            </DropDownItem>
+          </div>
+        </CSSTransition>
+        {/* //////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
-      {/* /////////////////////////////////////////////////////////////////////////////////////////////////////// */}
-      <CSSTransition
-        in={activeMenu === "Beverage, Food Display & Warmers"}
-        unmountOnExit
-        timeout={500}
-        classNames="menu-secondary"
-        onEnter={calcHeight}
-      >
-        <div className="menu">
-          <DropDownItem
-            leftIcon={<FaRegArrowAltCircleLeft />}
-            goToMenu="main"
-          />
+        <CSSTransition
+          in={activeMenu === "Refrigeration"}
+          unmountOnExit
+          timeout={500}
+          classNames="menu-secondary"
+          onEnter={calcHeight}
+        >
+          <div className="menu">
+            <DropDownItem
+              leftIcon={<FaRegArrowAltCircleLeft />}
+              goToMenu="main"
+              menuItem="menu-back"
+            />
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Coffee Machines
-          </DropDownItem>
+            <DropDownItem menuItem="Upright Coolers">
+              Upright Coolers
+            </DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Espresso Machines
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Coffee Grinders
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Hot Water Dispensers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Juice & Slushy Machines
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Other Dispensers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Steam Tables
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Microwaves
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Soup Warmers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Food Warmers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Concession, Catering & Buffet
-          </DropDownItem>
-        </div>
-      </CSSTransition>
+            <DropDownItem menuItem="Upright Freezers">
+              Upright Freezers
+            </DropDownItem>
+            <DropDownItem menuItem="Worktop & Undercounter Coolers">
+              Worktop & Undercounter Coolers
+            </DropDownItem>
+            <DropDownItem menuItem="Worktop & Undercounter Freezers">
+              Worktop & Undercounter Freezers
+            </DropDownItem>
+            <DropDownItem menuItem="Back Bar Coolers">
+              Back Bar Coolers
+            </DropDownItem>
+            <DropDownItem menuItem="Sandwich Prep Tables">
+              Sandwich Prep Tables
+            </DropDownItem>
+            <DropDownItem menuItem="Pizza Prep Tables">
+              Pizza Prep Tables
+            </DropDownItem>
+            <DropDownItem menuItem="Chef Bases">Chef Bases</DropDownItem>
+            <DropDownItem menuItem="Ice Machines">Ice Machines</DropDownItem>
+            <DropDownItem menuItem="Blast Freezers & Chillers">
+              Blast Freezers & Chillers
+            </DropDownItem>
+            <DropDownItem menuItem="Display Cases">Display Cases</DropDownItem>
+            <DropDownItem menuItem="Ice Cream">Ice Cream</DropDownItem>
+            <DropDownItem menuItem="Walk-in Coolers & Freezers">
+              Walk-in Coolers & Freezers
+            </DropDownItem>
+          </div>
+        </CSSTransition>
+        {/* ////////////////////////////////////////////////////////////////////////////////////////////// */}
 
-      {/* ////////////////////////////////////////////////////////////////////////////////////////////// */}
-      <CSSTransition
-        in={activeMenu === "Warewashing, Sinks & Plumbing"}
-        unmountOnExit
-        timeout={500}
-        classNames="menu-secondary"
-        onEnter={calcHeight}
-      >
-        <div className="menu">
-          <DropDownItem
-            leftIcon={<FaRegArrowAltCircleLeft />}
-            goToMenu="main"
-          />
+        <CSSTransition
+          in={activeMenu === "Food Preparation"}
+          unmountOnExit
+          timeout={500}
+          classNames="menu-secondary"
+          onEnter={calcHeight}
+        >
+          <div className="menu">
+            <DropDownItem
+              leftIcon={<FaRegArrowAltCircleLeft />}
+              goToMenu="main"
+            />
+            <DropDownItem menuItem="all">All</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Dishwashers
-          </DropDownItem>
+            <DropDownItem menuItem="Meat Grinders">Meat Grinders</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Dishwasher Detergents
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Sinks
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Handwash Sinks
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Faucets
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Faucet Parts
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Grease Traps
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Water Filters
-          </DropDownItem>
-        </div>
-      </CSSTransition>
+            <DropDownItem menuItem="Meat Saw">Meat Saw</DropDownItem>
+            <DropDownItem menuItem="Meat Tenderizers">
+              Meat Tenderizers
+            </DropDownItem>
+            <DropDownItem menuItem="Sausage Stuffers">
+              Sausage Stuffers
+            </DropDownItem>
+            <DropDownItem menuItem="Meat & Deli Slicers">
+              Meat & Deli Slicers
+            </DropDownItem>
+            <DropDownItem menuItem="Planetary Mixers">
+              Planetary Mixers
+            </DropDownItem>
+            <DropDownItem menuItem="Dough Sheeters, Cutters & Presses">
+              Dough Sheeters, Cutters & Presses
+            </DropDownItem>
+            <DropDownItem menuItem="Scales">Scales</DropDownItem>
+            <DropDownItem menuItem="Salad Dryers">Salad Dryers</DropDownItem>
+            <DropDownItem menuItem="Automatic Peelers">
+              Automatic Peelers
+            </DropDownItem>
+            <DropDownItem menuItem="Food Processors">
+              Food Processors
+            </DropDownItem>
+            <DropDownItem menuItem="Blenders">Blenders</DropDownItem>
+            <DropDownItem menuItem="Immersion Blenders">
+              Immersion Blenders
+            </DropDownItem>
 
-      <CSSTransition
-        in={activeMenu === "Tables, Shelves & Furniture"}
-        unmountOnExit
-        timeout={500}
-        classNames="menu-secondary"
-        onEnter={calcHeight}
-      >
-        <div className="menu">
-          <DropDownItem
-            leftIcon={<FaRegArrowAltCircleLeft />}
-            goToMenu="main"
-          />
+            <DropDownItem menuItem="Juicers">Juicers</DropDownItem>
+            <DropDownItem menuItem="Food Cutters">Food Cutters</DropDownItem>
+            <DropDownItem menuItem="Can Openers">Can Openers</DropDownItem>
+            <DropDownItem menuItem="Mobile Food Racks">
+              Mobile Food Racks
+            </DropDownItem>
+          </div>
+        </CSSTransition>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Work Tables
-          </DropDownItem>
+        {/* /////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+        <CSSTransition
+          in={activeMenu === "Beverage, Food Display & Warmers"}
+          unmountOnExit
+          timeout={500}
+          classNames="menu-secondary"
+          onEnter={calcHeight}
+        >
+          <div className="menu">
+            <DropDownItem
+              leftIcon={<FaRegArrowAltCircleLeft />}
+              goToMenu="main"
+            />
+            <DropDownItem menuItem="all">All</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Equipment Stands
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Casters
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Shelves
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Dunnage Racks
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Dining Tables & Booths
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Dining Chairs
-          </DropDownItem>
-        </div>
-      </CSSTransition>
-      <CSSTransition
-        in={activeMenu === "Janitorial & Chemicals"}
-        unmountOnExit
-        timeout={500}
-        classNames="menu-secondary"
-        onEnter={calcHeight}
-      >
-        <div className="menu">
-          <DropDownItem
-            leftIcon={<FaRegArrowAltCircleLeft />}
-            goToMenu="main"
-          />
+            <DropDownItem menuItem="Coffee Machines">
+              Coffee Machines
+            </DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Pails
-          </DropDownItem>
+            <DropDownItem menuItem="Espresso Machines">
+              Espresso Machines
+            </DropDownItem>
+            <DropDownItem menuItem="Coffee Grinders">
+              Coffee Grinders
+            </DropDownItem>
+            <DropDownItem menuItem="Hot Water Dispensers">
+              Hot Water Dispensers
+            </DropDownItem>
+            <DropDownItem menuItem="Juice & Slushy Machines">
+              Juice & Slushy Machines
+            </DropDownItem>
+            <DropDownItem menuItem="Other Dispensers">
+              Other Dispensers
+            </DropDownItem>
+            <DropDownItem menuItem="Steam Tables">Steam Tables</DropDownItem>
+            <DropDownItem menuItem="Microwaves">Microwaves</DropDownItem>
+            <DropDownItem menuItem="Soup Warmers">Soup Warmers</DropDownItem>
+            <DropDownItem menuItem="Food Warmers">Food Warmers</DropDownItem>
+            <DropDownItem menuItem="Concession, Catering & Buffet">
+              Concession, Catering & Buffet
+            </DropDownItem>
+          </div>
+        </CSSTransition>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Brooms
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Mops
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Gloves
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Chemicals
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Cleaning Supplies
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Pest Control
-          </DropDownItem>
-        </div>
-      </CSSTransition>
+        {/* ////////////////////////////////////////////////////////////////////////////////////////////// */}
+        <CSSTransition
+          in={activeMenu === "Warewashing, Sinks & Plumbing"}
+          unmountOnExit
+          timeout={500}
+          classNames="menu-secondary"
+          onEnter={calcHeight}
+        >
+          <div className="menu">
+            <DropDownItem
+              leftIcon={<FaRegArrowAltCircleLeft />}
+              goToMenu="main"
+            />
 
-      <CSSTransition
-        in={activeMenu === "Clothing"}
-        unmountOnExit
-        timeout={500}
-        classNames="menu-secondary"
-        onEnter={calcHeight}
-      >
-        <div className="menu">
-          <DropDownItem
-            leftIcon={<FaRegArrowAltCircleLeft />}
-            goToMenu="main"
-          />
+            <DropDownItem menuItem="all">All</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Chef Shirts & Jackets
-          </DropDownItem>
+            <DropDownItem menuItem="Water Filters">Water Filters</DropDownItem>
+          </div>
+        </CSSTransition>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Chef Pants
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Hats & Serving Gloves
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Aprons
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Oven Mitts
-          </DropDownItem>
-        </div>
-      </CSSTransition>
+        <CSSTransition
+          in={activeMenu === "Tables, Shelves & Furniture"}
+          unmountOnExit
+          timeout={500}
+          classNames="menu-secondary"
+          onEnter={calcHeight}
+        >
+          <div className="menu">
+            <DropDownItem
+              leftIcon={<FaRegArrowAltCircleLeft />}
+              goToMenu="main"
+            />
+            <DropDownItem menuItem="all">All</DropDownItem>
 
-      <CSSTransition
-        in={activeMenu === "Tabletop & Service"}
-        unmountOnExit
-        timeout={500}
-        classNames="menu-secondary"
-        onEnter={calcHeight}
-      >
-        <div className="menu">
-          <DropDownItem
-            leftIcon={<FaRegArrowAltCircleLeft />}
-            goToMenu="main"
-          />
+            <DropDownItem menuItem="Work Tables">Work Tables</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Glassware
-          </DropDownItem>
+            <DropDownItem menuItem="Equipment Stands">
+              Equipment Stands
+            </DropDownItem>
+            <DropDownItem menuItem="Casters">Casters</DropDownItem>
+            <DropDownItem menuItem="Shelves">Shelves</DropDownItem>
+            <DropDownItem menuItem="Dunnage Racks">Dunnage Racks</DropDownItem>
+            <DropDownItem menuItem="Dining Tablse & Booths">
+              Dining Tables & Booths
+            </DropDownItem>
+            <DropDownItem menuItem="Dining Chairs">Dining Chairs</DropDownItem>
+          </div>
+        </CSSTransition>
+        <CSSTransition
+          in={activeMenu === "Janitorial & Chemicals"}
+          unmountOnExit
+          timeout={500}
+          classNames="menu-secondary"
+          onEnter={calcHeight}
+        >
+          <div className="menu">
+            <DropDownItem
+              leftIcon={<FaRegArrowAltCircleLeft />}
+              goToMenu="main"
+            />
+            <DropDownItem menuItem="all">All</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Stemware
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Dessert Glasses
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Dinnerware
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Flatware
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Tumblers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Melamine
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Serveware
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Squeeze Bottles
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Bar Supplies
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Disposables & Takeout
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Bussing & Transport
-          </DropDownItem>
-        </div>
-      </CSSTransition>
+            <DropDownItem menuItem="Pails">Pails</DropDownItem>
 
-      <CSSTransition
-        in={activeMenu === "Smallwares"}
-        unmountOnExit
-        timeout={500}
-        classNames="menu-secondary"
-        onEnter={calcHeight}
-      >
-        <div className="menu">
-          <DropDownItem
-            leftIcon={<FaRegArrowAltCircleLeft />}
-            goToMenu="main"
-          />
+            <DropDownItem menuItem="Brooms">Brooms</DropDownItem>
+            <DropDownItem menuItem="Mops">Mops</DropDownItem>
+            <DropDownItem menuItem="Gloves">Gloves</DropDownItem>
+            <DropDownItem menuItem="Chemicals">Chemicals</DropDownItem>
+            <DropDownItem menuItem="Cleaning Supplies">
+              Cleaning Supplies
+            </DropDownItem>
+            <DropDownItem menuItem="Pest Control">Pest Control</DropDownItem>
+          </div>
+        </CSSTransition>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Knives
-          </DropDownItem>
+        <CSSTransition
+          in={activeMenu === "Clothing"}
+          unmountOnExit
+          timeout={500}
+          classNames="menu-secondary"
+          onEnter={calcHeight}
+        >
+          <div className="menu">
+            <DropDownItem
+              leftIcon={<FaRegArrowAltCircleLeft />}
+              goToMenu="main"
+            />
+            <DropDownItem menuItem="all">All</DropDownItem>
 
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Japanese Knives
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Knife Sharpeners
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Stock Pots
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Sauce Pots
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Braziers
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Fry Pans
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Cast Iron
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Other Pots & Pans
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Sheet & Cookie Pans
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Cake & Bread Pans
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Pizza Pans & Screens
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Pizza Tools & Bags
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Steam Table Pans
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Poly Food Pans
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Food Storage
-          </DropDownItem>
-          <DropDownItem
-          // leftIcon={<RiKnifeLine/>}
-          >
-            Kitchen Utensils
-          </DropDownItem>
-        </div>
-      </CSSTransition>
-    </div>
+            <DropDownItem menuItem="Chef Shirts & Jackets">
+              Chef Shirts & Jackets
+            </DropDownItem>
 
+            <DropDownItem menuItem="Chef Pants">Chef Pants</DropDownItem>
+            <DropDownItem menuItem="Hats & Serving Gloves">
+              Hats & Serving Gloves
+            </DropDownItem>
+            <DropDownItem menuItem="Aprons">Aprons</DropDownItem>
+            <DropDownItem menuItem="Oven Mitts">Oven Mitts</DropDownItem>
+          </div>
+        </CSSTransition>
+
+        <CSSTransition
+          in={activeMenu === "Tabletop & Service"}
+          unmountOnExit
+          timeout={500}
+          classNames="menu-secondary"
+          onEnter={calcHeight}
+        >
+          <div className="menu">
+            <DropDownItem
+              leftIcon={<FaRegArrowAltCircleLeft />}
+              goToMenu="main"
+            />
+
+            <DropDownItem menuItem="Glassware">Glassware</DropDownItem>
+
+            <DropDownItem menuItem="Stemware">Stemware</DropDownItem>
+            <DropDownItem menuItem="Dessert Glasses">
+              Dessert Glasses
+            </DropDownItem>
+            <DropDownItem menuItem="Dinnerware">Dinnerware</DropDownItem>
+            <DropDownItem menuItem="Flatware">Flatware</DropDownItem>
+            <DropDownItem menuItem="Tumblers">Tumblers</DropDownItem>
+            <DropDownItem menuItem="Melamine">Melamine</DropDownItem>
+            <DropDownItem menuItem="Serveware">Serveware</DropDownItem>
+            <DropDownItem menuItem="Squeeze Bottles">
+              Squeeze Bottles
+            </DropDownItem>
+            <DropDownItem menuItem="Bar Supplies">Bar Supplies</DropDownItem>
+            <DropDownItem menuItem="Disposbales & Takeout">
+              Disposables & Takeout
+            </DropDownItem>
+            <DropDownItem menuItem="Bussing & Transport">
+              Bussing & Transport
+            </DropDownItem>
+          </div>
+        </CSSTransition>
+
+        <CSSTransition
+          in={activeMenu === "Smallwares"}
+          unmountOnExit
+          timeout={500}
+          classNames="menu-secondary"
+          onEnter={calcHeight}
+        >
+          <div className="menu">
+            <DropDownItem
+              leftIcon={<FaRegArrowAltCircleLeft />}
+              goToMenu="main"
+            />
+            <DropDownItem menuItem="all">All</DropDownItem>
+
+            <DropDownItem menuItem="Knives">Knives</DropDownItem>
+
+            <DropDownItem menuItem="Japanese Knives">
+              Japanese Knives
+            </DropDownItem>
+            <DropDownItem menuItem="Knife Sharpeners">
+              Knife Sharpeners
+            </DropDownItem>
+            <DropDownItem menuItem="Stock Pots">Stock Pots</DropDownItem>
+            <DropDownItem menuItem="Sauce Pots">Sauce Pots</DropDownItem>
+            <DropDownItem menuItem="Braziers">Braziers</DropDownItem>
+            <DropDownItem menuItem="Fry Pans">Fry Pans</DropDownItem>
+            <DropDownItem menuItem="Cast Iron">Cast Iron</DropDownItem>
+            <DropDownItem menuItem="Other Pots & Pans">
+              Other Pots & Pans
+            </DropDownItem>
+            <DropDownItem menuItem="Sheet & Cookie Pans">
+              Sheet & Cookie Pans
+            </DropDownItem>
+            <DropDownItem menuItem="Cake & Bread Pans">
+              Cake & Bread Pans
+            </DropDownItem>
+            <DropDownItem menuItem="PIzza Pans & Screens">
+              Pizza Pans & Screens
+            </DropDownItem>
+            <DropDownItem menuItem="Pizza Tools & Bags">
+              Pizza Tools & Bags
+            </DropDownItem>
+            <DropDownItem menuItem="Steam Table Pans">
+              Steam Table Pans
+            </DropDownItem>
+            <DropDownItem menuItem="Poly Food Pans">
+              Poly Food Pans
+            </DropDownItem>
+            <DropDownItem menuItem="Food Storage">Food Storage</DropDownItem>
+            <DropDownItem menuItem="Kitchen Utensils">
+              Kitchen Utensils
+            </DropDownItem>
+          </div>
+        </CSSTransition>
+      </div>
+    </OutsideClickHandler>
     // </div>
   );
 }

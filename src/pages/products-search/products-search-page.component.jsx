@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useReducer } from "react";
+import { useState, useEffect, useRef, useReducer, useCallback } from "react";
 import { CSSTransition } from "react-transition-group";
 
 import { Button, Card, CardBody, Col, Row } from "shards-react";
@@ -18,9 +18,14 @@ import { Helmet } from "react-helmet-async";
 import ErrorMessageBox from "../../components/error-message-box/error-message-box.component";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getError } from "../../util";
-import { toast } from "react-toastify";
+
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
+
 import TreeMenu from "react-simple-tree-menu";
-// import { Toast } from "react-toastify/dist/components";
 
 function getBrandLogo(cloudFront, brand) {
   brand = brand.toLowerCase();
@@ -41,8 +46,8 @@ function getBrandLogo(cloudFront, brand) {
     case "winco":
       return cloudFront + "winco.png";
 
-    case "wusthof":
-      return "/assets/images/logos/wusthof.png";
+    case "rubbermaid":
+      return cloudFront + "rubbermaid.png";
   }
 }
 
@@ -399,13 +404,26 @@ const ProductSearchPage = () => {
         <div className="product-search-cardbody">
           <div className="search-filter-container-test">
             <Button
-              onClick={() => setShowFilterMenu(!showFilterMenu)}
+              onClick={() => {
+                setShowFilterMenu(!showFilterMenu);
+                // filterHelpNotify();
+              }}
               pill
               theme="primary"
               className="filter-open-button"
+              id="filter-open-button"
             >
               <BsFilterCircle size="25px" />
             </Button>
+            <Tooltip
+              id="filter-tooltip"
+              anchorId="filter-open-button"
+              variant="info"
+              place="right"
+              content="Click me to filter products!"
+              events={["hover", "onload"]}
+              delayHide={1000}
+            />
 
             <div
               className="search-filter-container-test-2"
@@ -807,6 +825,8 @@ const ProductSearchPage = () => {
                     price={product.onlinePrice[0]}
                     gasType={product.gasType}
                     countInStock={product.inStock}
+                    additionalInfo={product.additionalInfo}
+                    shortDescription={product.shortDescription}
                   />
                 ))}
               </>
@@ -815,24 +835,12 @@ const ProductSearchPage = () => {
         </div>
       </div>
       <div className="search-page-pagination-container">
-        {/* <Row md={10}>
-          {[...Array(pages).keys()].map((x) => (
-            <Col>
-              <Link
-                className={x + 1 === page ? "active" : ""}
-                key={x + 1}
-                to={getFilterURL({ page: x + 1 })}
-              >
-                <Button className="pagination-buttons">{x + 1}</Button>
-              </Link>
-            </Col>
-          ))}
-        </Row> */}
-
         <ReactPaginate
           previousLabel={"← Previous"}
           nextLabel={"Next →"}
           pageCount={pages}
+          pageClassName={"react-paginate-page-nums"}
+          activeLinkClassName={"react-paginate-page-active"}
           onPageChange={handlePageClick}
           containerClassName={"pagination"}
           previousLinkClassName={"pagination__link"}

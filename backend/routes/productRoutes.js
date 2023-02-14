@@ -1,6 +1,7 @@
 import express, { query } from "express";
 import expressAsyncHandler from "express-async-handler";
 import { NON_EXECUTABLE_FILE_MODE } from "patch-package/dist/patch/parse.js";
+import { toast } from "react-toastify";
 import Product from "../models/productModels.js";
 
 // copied from seedRoutes and alterred to product
@@ -240,6 +241,8 @@ productRouter.get(
       categoriesDictObj[category] = { label: category };
       categoriesDictObj[category]["nodes"] = subCategoriesDictObj;
     }
+
+    toast.error("test 123");
 
     console.log("\nfull dictionary: \n", categoriesDictObj);
 

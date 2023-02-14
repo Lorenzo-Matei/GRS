@@ -171,12 +171,14 @@ const productSchema = new mongoose.Schema( // mongoose.schema takes 2 parameters
       default: EMPTY_STRING,
     },
 
-    additionalInfo: {
-      type: String,
-      required: false,
-      unique: false,
-      default: EMPTY_STRING,
-    },
+    additionalInfo: [
+      {
+        type: String,
+        required: false,
+        unique: false,
+        default: EMPTY_STRING,
+      },
+    ],
     clearance: {
       type: Boolean,
       required: false,

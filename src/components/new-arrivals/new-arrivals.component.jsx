@@ -49,6 +49,21 @@ class NewArrivalSection extends React.Component {
     this.state = {
       sections: [
         {
+          productName: "Rubbermaid Bus Utility Box 5 inch Deep - Gray",
+          productImage: cloudFrontDistributionDomain + "FG334992GRAY.jpg",
+          productRating: 5,
+          productPrice: "CALL",
+          id: 11,
+        },
+        {
+          productName: "Rubbermaid Bus Utility Box 5 inch Deep - White",
+          productImage: cloudFrontDistributionDomain + "FG334992WHT.png",
+          productRating: 5,
+          productPrice: "CALL",
+          id: 12,
+        },
+
+        {
           productName: "Vulcan LG300 Fryer 40lb Natural Gas",
           productImage: cloudFrontDistributionDomain + "vulcan-lg300.png",
           productRating: 5,
@@ -142,7 +157,7 @@ class NewArrivalSection extends React.Component {
               color="#ddd"
               radius={15}
             >
-              <h3 className="new-arrivals-title">New Arrivals</h3>
+              <h3 className="new-arrivals-title">Featured</h3>
             </NeuDiv>
 
             <Carousel

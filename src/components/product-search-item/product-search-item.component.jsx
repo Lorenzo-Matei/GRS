@@ -13,6 +13,7 @@ import { MdOutlineAddShoppingCart } from "react-icons/md";
 import "./product-search-item.styles.scss";
 import { Store } from "../../Store";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 // const ProductSearchItem = (props) => {
 function ProductSearchItem(props) {
@@ -67,14 +68,6 @@ function ProductSearchItem(props) {
   // const gasType = {props.gasType};
 
   function fuelBadgeHandler(gas) {
-    // if (gas == "Natural Gas") {
-    //   return (
-    //     <Badge className="product-card-badge-fuel" outline theme="warning">
-    //       NATURAL <br />
-    //       GAS
-    //     </Badge>
-    //   );
-    // } else
     if (gas == "Propane") {
       return (
         <Badge className="product-card-badge-fuel" outline theme="info">
@@ -161,15 +154,25 @@ function ProductSearchItem(props) {
               alt={props.name}
             />
           </Link>
-          <img
-            className="corner-product-card-logo"
-            src={props.brandLogo}
-            alt={props.brand}
-          />
+          <div id="corner-product-card-div">
+            <img
+              className="corner-product-card-logo"
+              src={props.brandLogo}
+              alt={props.brand}
+            />
+          </div>
           <Badge className="product-card-badge" outline theme="success">
             NEW!
           </Badge>
           {fuelBadgeHandler(props.gasType)};
+          <div className="product-card-overlay">
+            <Link
+              to={`/products/${props.slug}`}
+              style={{ textDecoration: "None" }}
+            >
+              <h5 className="product-card-addinfo">{props.shortDescription}</h5>
+            </Link>
+          </div>
         </div>
 
         <div className="rightside-product-item">

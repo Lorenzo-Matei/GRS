@@ -42,11 +42,6 @@ const App = () => {
         backgroundPosition: "center",
       }}
     >
-      <ToastContainer
-        position="bottom-center"
-        limit={1}
-        style={{ color: "#121212" }}
-      />
       <Router>
         <NavbarFloating />
         <Alert theme="warning" className="maintenance-alert">

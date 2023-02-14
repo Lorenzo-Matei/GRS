@@ -183,7 +183,7 @@ function ProductPage() {
     const warrantyList = [];
 
     function notEmpty(item) {
-      if (item > 0 || item != "") {
+      if (item > 0 || item != "" || item != "0") {
         return true;
       } else {
         return false;
@@ -211,7 +211,7 @@ function ProductPage() {
           </h5>
           <br />
           <h7 className="product-page-collapsible-text">
-            {component.componentDuration} Months
+            {component.componentDuration}
           </h7>
         </Col>
       ));
@@ -219,6 +219,7 @@ function ProductPage() {
       console.log(warrantyList);
     }
   }
+
   // ///////////////////////////////////////////////////////////////////////////////////////////////////
   function renderEnergyInfo(productData) {
     //maybe add info headers parameter
@@ -352,16 +353,7 @@ function ProductPage() {
         <div className="item-info-card" id="purchase-card">
           <h1 id="product-page-title">{productFullName}</h1>
 
-          <div id="product-page-ratings-container">
-            {/* <Rating
-              id="product-page-rating-star"
-              allowHalfIcon="true"
-              showTooltip="true"
-              readonly="true"
-              emptyColor="#ddd"
-              ratingValue={87}
-            /> */}
-          </div>
+          <div id="product-page-ratings-container"></div>
           {productData.inStock === 0 ? (
             <Badge outline theme="danger" id="product-page-stock-indicator">
               Out of Stock
@@ -440,6 +432,29 @@ function ProductPage() {
 
         <Collapsible
           className="product-page-collapsible"
+          trigger={
+            <Button
+              className="product-page-collapsible-section"
+              outline
+              theme="light"
+            >
+              Additional Information
+            </Button>
+          }
+        >
+          <div className="product-page-collapsible-info">
+            <Row>
+              <Col className="product-page-collapsible-column">
+                <h5 className="product-page-collapsible-headers"></h5>
+                <br />
+                {infoAvailableCheck(productData.additionalInfo)}
+              </Col>
+            </Row>
+          </div>
+        </Collapsible>
+
+        <Collapsible
+          className="product-page-collapsible"
           // open="true"
           trigger={
             <Button
@@ -501,7 +516,9 @@ function ProductPage() {
                 </h5>
                 <br />
                 <h7 className="product-page-collapsible-text">
-                  {productData.partsAndLabour} Months
+                  {productData.partsAndLabour && productData.partsAndLabour > 0
+                    ? productData.partsAndLabour + " Months"
+                    : "None"}
                 </h7>
               </Col>
               <Col className="product-page-collapsible-column">
@@ -531,29 +548,6 @@ function ProductPage() {
         >
           <div className="product-page-collapsible-info">
             <Row>{renderEnergyInfo(productData)}</Row>
-          </div>
-        </Collapsible>
-
-        <Collapsible
-          className="product-page-collapsible"
-          trigger={
-            <Button
-              className="product-page-collapsible-section"
-              outline
-              theme="light"
-            >
-              Additional Information
-            </Button>
-          }
-        >
-          <div className="product-page-collapsible-info">
-            <Row>
-              <Col className="product-page-collapsible-column">
-                <h5 className="product-page-collapsible-headers"></h5>
-                <br />
-                {infoAvailableCheck(productData.additionalInfo)}
-              </Col>
-            </Row>
           </div>
         </Collapsible>
       </div>

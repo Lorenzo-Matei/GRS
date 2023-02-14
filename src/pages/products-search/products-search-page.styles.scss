@@ -48,6 +48,12 @@
   z-index: 3;
 }
 
+#filter-tooltip {
+  padding: 20px;
+  border: 1px solid #ddd;
+  font-weight: 500;
+}
+
 .search-filter-container-test {
   // this is stick version
   display: flex;
@@ -208,4 +214,12 @@
 #filter-title {
   color: #ddd;
   font-weight: 500;
+}
+
+.react-paginate-page-nums {
+  color: #ddd;
+}
+.react-paginate-page-active {
+  color: #007bff !important;
+  font-weight: 600;
 }

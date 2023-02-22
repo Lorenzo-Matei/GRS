@@ -24,7 +24,7 @@ function CategoriesDirectory() {
     {
       id: 1,
       title: "Cooking",
-      imageUrl: cloudFrontMiscImages + "cooking-category.jpg",
+      imageUrl: cloudFrontMiscImages + "cooking-category.png",
       //
     },
     {

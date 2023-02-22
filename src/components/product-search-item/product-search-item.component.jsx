@@ -141,6 +141,14 @@ function ProductSearchItem(props) {
     }
   }
 
+  function getDescriptinOverlay(field) {
+    if (field.length > 0 && field != "") {
+      return field;
+    } else {
+      return "Click Me For More Information";
+    }
+  }
+
   return (
     <div className="search-item-card">
       <div className="search-item-cardbody">
@@ -170,7 +178,9 @@ function ProductSearchItem(props) {
               to={`/products/${props.slug}`}
               style={{ textDecoration: "None" }}
             >
-              <h5 className="product-card-addinfo">{props.shortDescription}</h5>
+              <h5 className="product-card-addinfo">
+                {getDescriptinOverlay(props.shortDescription)}
+              </h5>
             </Link>
           </div>
         </div>

@@ -29,26 +29,31 @@ import TreeMenu from "react-simple-tree-menu";
 
 function getBrandLogo(cloudFront, brand) {
   brand = brand.toLowerCase();
+  brand = brand.replace(" ", "-");
 
-  switch (brand) {
-    case "blodgett":
-      return cloudFront + "blodgett.png";
+  const logoURL = cloudFront + brand + ".png";
 
-    case "ecomax":
-      return cloudFront + "ecomax.png";
+  return logoURL;
 
-    case "hobart":
-      return cloudFront + "hobart.png";
+  // switch (brand) {
+  //   case "blodgett":
+  //     return cloudFront + "blodgett.png";
 
-    case "vulcan":
-      return cloudFront + "vulcan.png";
+  //   case "ecomax":
+  //     return cloudFront + "ecomax.png";
 
-    case "winco":
-      return cloudFront + "winco.png";
+  //   case "hobart":
+  //     return cloudFront + "hobart.png";
 
-    case "rubbermaid":
-      return cloudFront + "rubbermaid.png";
-  }
+  //   case "vulcan":
+  //     return cloudFront + "vulcan.png";
+
+  //   case "winco":
+  //     return cloudFront + "winco.png";
+
+  //   case "rubbermaid":
+  //     return cloudFront + "rubbermaid.png";
+  // }
 }
 
 const ACTIONS = {
@@ -302,6 +307,10 @@ const ProductSearchPage = () => {
     fetchVoltages();
   }, [dispatch]);
 
+  function onloadTooltip() {}
+
+  useEffect(() => {});
+
   const getFilterURL = (filter) => {
     const filterPage = filter.page || page;
     const filterCategory = filter.category || category;
@@ -331,6 +340,7 @@ const ProductSearchPage = () => {
   ///////////////////////////////////////////////////////////////////
   // ** gotta get props through to filters component
   function handlePageClick({ selected: selectedPage }) {
+    console.log("selected num: " + selectedPage);
     navigate(
       getFilterURL({
         page: selectedPage + 1,
@@ -421,7 +431,7 @@ const ProductSearchPage = () => {
               variant="info"
               place="right"
               content="Click me to filter products!"
-              events={["hover", "onload"]}
+              events={["hover"]}
               delayHide={1000}
             />
 
@@ -530,6 +540,7 @@ const ProductSearchPage = () => {
                               navigate(
                                 getFilterURL({
                                   order: click.target.value,
+                                  page: 1,
                                 })
                               );
                             }}
@@ -559,6 +570,7 @@ const ProductSearchPage = () => {
                                         subCategory: selectionData.subCategory,
                                         microCategory:
                                           selectionData.microCategory,
+                                        page: 1,
                                       })
                                     );
                                   }}
@@ -576,7 +588,7 @@ const ProductSearchPage = () => {
                                       ? "font-weight-bold"
                                       : "filter-item"
                                   }
-                                  to={getFilterURL({ brands: "all" })}
+                                  to={getFilterURL({ brands: "all", page: 1 })}
                                 >
                                   Any
                                 </Link>
@@ -587,6 +599,7 @@ const ProductSearchPage = () => {
                                   <Link
                                     to={getFilterURL({
                                       brands: brand,
+                                      page: 1,
                                     })}
                                     className={
                                       brand === brands
@@ -611,7 +624,7 @@ const ProductSearchPage = () => {
                                       ? "font-weight-bold"
                                       : "filter-item"
                                   }
-                                  to={getFilterURL({ gasType: "all" })}
+                                  to={getFilterURL({ gasType: "all", page: 1 })}
                                 >
                                   Any
                                 </Link>
@@ -622,6 +635,7 @@ const ProductSearchPage = () => {
                                   <Link
                                     to={getFilterURL({
                                       gasType: type,
+                                      page: 1,
                                     })}
                                     className={
                                       type === gasType
@@ -646,7 +660,7 @@ const ProductSearchPage = () => {
                                       ? "font-weight-bold"
                                       : "filter-item"
                                   }
-                                  to={getFilterURL({ phase: "all" })}
+                                  to={getFilterURL({ phase: "all", page: 1 })}
                                 >
                                   Any
                                 </Link>
@@ -657,6 +671,7 @@ const ProductSearchPage = () => {
                                   <Link
                                     to={getFilterURL({
                                       phase: phaseItem,
+                                      page: 1,
                                     })}
                                     className={
                                       phaseItem === phase
@@ -681,7 +696,7 @@ const ProductSearchPage = () => {
                                       ? "font-weight-bold"
                                       : "filter-item"
                                   }
-                                  to={getFilterURL({ voltage: "all" })}
+                                  to={getFilterURL({ voltage: "all", page: 1 })}
                                 >
                                   Any
                                 </Link>
@@ -692,6 +707,7 @@ const ProductSearchPage = () => {
                                   <Link
                                     to={getFilterURL({
                                       voltage: voltageItem,
+                                      page: 1,
                                     })}
                                     className={
                                       voltageItem === voltage
@@ -715,7 +731,7 @@ const ProductSearchPage = () => {
                                       ? "font-weight-bold"
                                       : "filter-item"
                                   }
-                                  to={getFilterURL({ price: "all" })}
+                                  to={getFilterURL({ price: "all", page: 1 })}
                                 >
                                   Any
                                 </Link>
@@ -726,6 +742,7 @@ const ProductSearchPage = () => {
                                   <Link
                                     to={getFilterURL({
                                       price: priceItem.value,
+                                      page: 1,
                                     })}
                                     className={
                                       priceItem.value === price
@@ -842,6 +859,8 @@ const ProductSearchPage = () => {
           pageClassName={"react-paginate-page-nums"}
           activeLinkClassName={"react-paginate-page-active"}
           onPageChange={handlePageClick}
+          selectedPageRel={"3"}
+          // forcePage={page}
           containerClassName={"pagination"}
           previousLinkClassName={"pagination__link"}
           nextLinkClassName={"pagination__link"}

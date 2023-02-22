@@ -27,6 +27,7 @@ import LoadingPageAnimation from "../../components/loading-page-animation/loadin
 import ErrorMessageBox from "../../components/error-message-box/error-message-box.component";
 import { getError } from "../../util";
 import { Store } from "../../Store";
+import { toast } from "react-toastify";
 
 const ACTIONS = {
   FETCH_REQUEST: "FETCH_REQUEST",
@@ -211,7 +212,7 @@ function ProductPage() {
           </h5>
           <br />
           <h7 className="product-page-collapsible-text">
-            {component.componentDuration}
+            {component.componentDuration} Months
           </h7>
         </Col>
       ));
@@ -302,6 +303,45 @@ function ProductPage() {
       return "$ " + price;
     }
   }
+
+  function renderAddInfoDropDown(stringList) {
+    // stringList = infoAvailableCheck(stringList);
+    var addInfoList = [];
+
+    for (var stringNum = 0; stringNum < stringList.length; stringNum++) {
+      var string = stringList[stringNum];
+
+      if (string.length > 1) {
+        addInfoList.push(string);
+      }
+    }
+    // addInfoList = [];
+
+    return addInfoList.length > 0 ? (
+      <Collapsible
+        className="product-page-collapsible"
+        trigger={
+          <Button
+            className="product-page-collapsible-section"
+            outline
+            theme="light"
+          >
+            Additional Information
+          </Button>
+        }
+      >
+        <div className="product-page-collapsible-info">
+          <Row>
+            <Col className="product-page-collapsible-column">
+              <h5 className="product-page-collapsible-headers"></h5>
+              <br />
+              {addInfoList}
+            </Col>
+          </Row>
+        </div>
+      </Collapsible>
+    ) : null;
+  }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////   copied from products-page-component  //////////////////////////
@@ -326,7 +366,7 @@ function ProductPage() {
             // data={`/assets/images/test-products-images-nobg/${productData.images}`}
             data={data1}
             time={200000}
-            width="850px"
+            width="100%"
             height="500px"
             captionStyle={captionStyle}
             radius="10px"
@@ -343,9 +383,11 @@ function ProductPage() {
             thumbnailWidth="15%"
             style={{
               textAlign: "center",
-              maxWidth: "800px",
-              maxHeight: "500px",
-              margin: "0px",
+              height: "100%",
+              // width: "100%",
+              maxWidth: "100%",
+              maxHeight: "100%",
+              margin: "2rem",
             }}
           />
         </div>
@@ -412,144 +454,154 @@ function ProductPage() {
       </div>
       {/* /////////////////////////////////////////////////////////////// */}
       <div className="product-page-technicals-container">
-        <Collapsible
-          className="product-page-collapsible"
-          open="true"
-          trigger={
-            <Button
-              className="product-page-collapsible-section"
-              outline
-              theme="light"
-            >
-              Product Description
-            </Button>
-          }
-        >
-          <div className="product-page-collapsible-info">
-            {infoAvailableCheck(productData.shortDescription)}
-          </div>
-        </Collapsible>
-
-        <Collapsible
-          className="product-page-collapsible"
-          trigger={
-            <Button
-              className="product-page-collapsible-section"
-              outline
-              theme="light"
-            >
-              Additional Information
-            </Button>
-          }
-        >
-          <div className="product-page-collapsible-info">
-            <Row>
-              <Col className="product-page-collapsible-column">
-                <h5 className="product-page-collapsible-headers"></h5>
-                <br />
-                {infoAvailableCheck(productData.additionalInfo)}
-              </Col>
-            </Row>
-          </div>
-        </Collapsible>
-
-        <Collapsible
-          className="product-page-collapsible"
-          // open="true"
-          trigger={
-            <Button
-              className="product-page-collapsible-section"
-              outline
-              theme="light"
-            >
-              Technical Information
-            </Button>
-          }
-        >
-          <div className="product-page-collapsible-info">
-            <Row>
-              <Col className="product-page-collapsible-column">
-                <h5 className="product-page-collapsible-headers">Weight</h5>
-                <br />
+        {productData.shortDescription.length > 0 ? (
+          <Collapsible
+            className="product-page-collapsible"
+            open="true"
+            trigger={
+              <Button
+                className="product-page-collapsible-section"
+                outline
+                theme="light"
+              >
+                Product Description
+              </Button>
+            }
+          >
+            <div className="product-page-collapsible-info">
+              <Row>
                 <h7 className="product-page-collapsible-text">
-                  {productData.itemWeight}
+                  {productData.shortDescription}
                 </h7>
-              </Col>
-              <Col className="product-page-collapsible-column">
-                <h5 className="product-page-collapsible-headers">Dimensions</h5>
-                <br />
-                <h7 className="product-page-collapsible-text">
-                  {productData.dimensions}
-                </h7>
-              </Col>
+              </Row>
+            </div>
+          </Collapsible>
+        ) : null}
 
-              <Col className="product-page-collapsible-column">
-                <h5 className="product-page-collapsible-headers">Model</h5>
-                <br />
-                <h7 className="product-page-collapsible-text">
-                  {productData.storeSKU}
-                </h7>
-              </Col>
-            </Row>
-          </div>
-        </Collapsible>
-        {/* </div> */}
+        {renderAddInfoDropDown(productData.additionalInfo)}
 
-        <Collapsible
-          className="product-page-collapsible"
-          trigger={
-            <Button
-              className="product-page-collapsible-section"
-              outline
-              theme="light"
-            >
-              Warranty
-            </Button>
-          }
-        >
-          <div className="product-page-collapsible-info">
-            <Row>
-              {renderWarrantyInfo(productData)}
-              <Col className="product-page-collapsible-column">
-                <h5 className="product-page-collapsible-headers">
-                  Parts & Labour
-                </h5>
-                <br />
-                <h7 className="product-page-collapsible-text">
-                  {productData.partsAndLabour && productData.partsAndLabour > 0
-                    ? productData.partsAndLabour + " Months"
-                    : "None"}
-                </h7>
-              </Col>
-              <Col className="product-page-collapsible-column">
-                <h5 className="product-page-collapsible-headers">
-                  General Warranty
-                </h5>
-                <br />
-                <h7 className="product-page-collapsible-text">
-                  {productData.general} Months
-                </h7>
-              </Col>
-            </Row>
-          </div>
-        </Collapsible>
+        {productData.itemWeight.length > 1 ||
+        productData.dimensions.length > 1 ||
+        productData.storeSKU.length > 1 ? (
+          <Collapsible
+            className="product-page-collapsible"
+            // open="true"
+            trigger={
+              <Button
+                className="product-page-collapsible-section"
+                outline
+                theme="light"
+              >
+                Technical Information
+              </Button>
+            }
+          >
+            <div className="product-page-collapsible-info">
+              <Row>
+                {" "}
+                {productData.itemWeight.length > 1 ? ( // if data not empty, then show header and data, otherwise dont show
+                  <Col className="product-page-collapsible-column">
+                    <h5 className="product-page-collapsible-headers">Weight</h5>
+                    <br />
+                    <h7 className="product-page-collapsible-text">
+                      {productData.itemWeight}
+                    </h7>
+                  </Col>
+                ) : null}
+                {productData.dimensions.length > 1 ? ( // if data not empty, then show header and data, otherwise dont show
+                  <Col className="product-page-collapsible-column">
+                    <h5 className="product-page-collapsible-headers">
+                      Dimensions
+                    </h5>
+                    <br />
+                    <h7 className="product-page-collapsible-text">
+                      {productData.dimensions}
+                    </h7>
+                  </Col>
+                ) : null}
+                {productData.storeSKU.length > 1 ? (
+                  <Col className="product-page-collapsible-column">
+                    <h5 className="product-page-collapsible-headers">Model</h5>
+                    <br />
+                    <h7 className="product-page-collapsible-text">
+                      {productData.storeSKU}
+                    </h7>
+                  </Col>
+                ) : null}
+              </Row>
+            </div>
+          </Collapsible>
+        ) : null}
 
-        <Collapsible
-          className="product-page-collapsible"
-          trigger={
-            <Button
-              className="product-page-collapsible-section"
-              outline
-              theme="light"
-            >
-              Energy Information
-            </Button>
-          }
-        >
-          <div className="product-page-collapsible-info">
-            <Row>{renderEnergyInfo(productData)}</Row>
-          </div>
-        </Collapsible>
+        {productData.partsAndLabour > 0 ||
+        productData.general > 0 ||
+        productData.duration1 > 0 ||
+        productData.duration2 > 0 ? (
+          <Collapsible
+            className="product-page-collapsible"
+            trigger={
+              <Button
+                className="product-page-collapsible-section"
+                outline
+                theme="light"
+              >
+                Warranty
+              </Button>
+            }
+          >
+            <div className="product-page-collapsible-info">
+              <Row>
+                {renderWarrantyInfo(productData)}
+                {productData.partsAndLabour &&
+                productData.partsAndLabour > 0 ? (
+                  <Col className="product-page-collapsible-column">
+                    <h5 className="product-page-collapsible-headers">
+                      Parts & Labour
+                    </h5>
+                    <br />
+                    <h7 className="product-page-collapsible-text">
+                      {productData.partsAndLabour} Months
+                    </h7>
+                  </Col>
+                ) : null}
+                {productData.general && productData.general > 0 ? (
+                  <Col className="product-page-collapsible-column">
+                    <h5 className="product-page-collapsible-headers">
+                      General Warranty
+                    </h5>
+                    <br />
+                    <h7 className="product-page-collapsible-text">
+                      {productData.general} Months
+                    </h7>
+                  </Col>
+                ) : null}
+              </Row>
+            </div>
+          </Collapsible>
+        ) : null}
+
+        {productData.gasType.length > 0 ||
+        productData.phase.length > 0 ||
+        productData.voltage.length > 0 ||
+        productData.BTU.length > 0 ||
+        productData.amps.length > 0 ? (
+          <Collapsible
+            className="product-page-collapsible"
+            trigger={
+              <Button
+                className="product-page-collapsible-section"
+                outline
+                theme="light"
+              >
+                Energy Information
+              </Button>
+            }
+          >
+            <div className="product-page-collapsible-info">
+              <Row>{renderEnergyInfo(productData)}</Row>
+            </div>
+          </Collapsible>
+        ) : null}
       </div>
     </div>
   );

@@ -10,7 +10,6 @@ import ReactPaginate from "react-paginate";
 
 import ProductSearchFilters from "../../components/product-search-filters/product-search-filters.component";
 import ProductSearchItem from "../../components/product-search-item/product-search-item.component";
-// import productsData from "../../productsData"; // dont use anymore because of the useEffect hook that fetchs it
 
 import "./products-search-page.styles.scss";
 import axios from "axios";
@@ -29,31 +28,11 @@ import TreeMenu from "react-simple-tree-menu";
 
 function getBrandLogo(cloudFront, brand) {
   brand = brand.toLowerCase();
-  brand = brand.replace(" ", "-");
+  brand = brand.replaceAll(" ", "-");
 
   const logoURL = cloudFront + brand + ".png";
 
   return logoURL;
-
-  // switch (brand) {
-  //   case "blodgett":
-  //     return cloudFront + "blodgett.png";
-
-  //   case "ecomax":
-  //     return cloudFront + "ecomax.png";
-
-  //   case "hobart":
-  //     return cloudFront + "hobart.png";
-
-  //   case "vulcan":
-  //     return cloudFront + "vulcan.png";
-
-  //   case "winco":
-  //     return cloudFront + "winco.png";
-
-  //   case "rubbermaid":
-  //     return cloudFront + "rubbermaid.png";
-  // }
 }
 
 const ACTIONS = {
@@ -161,11 +140,6 @@ const ProductSearchPage = () => {
   {
     window.scrollTo(0, 200);
   }
-
-  const [currentPage, setCurrentPage] = useState(0);
-  const PER_PAGE = 16;
-  const offset = currentPage * PER_PAGE;
-  // const pageCount = Math.ceil(productsData.length / PER_PAGE);
 
   ////////////////////////////////////////////////////////////////
   // new filters code
@@ -339,6 +313,7 @@ const ProductSearchPage = () => {
 
   ///////////////////////////////////////////////////////////////////
   // ** gotta get props through to filters component
+  const [currentPageNum, setCurrentPageNum] = useState(page);
   function handlePageClick({ selected: selectedPage }) {
     console.log("selected num: " + selectedPage);
     navigate(
@@ -346,6 +321,7 @@ const ProductSearchPage = () => {
         page: selectedPage + 1,
       })
     );
+    setCurrentPageNum(page);
     window.scrollTo(0, 200);
   }
 
@@ -756,28 +732,6 @@ const ProductSearchPage = () => {
                               ))}
                             </ul>
                           </div>
-                          {/* <div>
-                            <h5>Customer Reviews</h5>
-                            <ul>
-                              <li
-                                className={
-                                  "all" === category ? "text-bold" : ""
-                                  }
-                                  to={getFilterURL({price: "all"})}
-                                >
-                                  Any
-                              </li>
-                              
-                              {ratingsFiltersDict.map((rating) => (
-                                <li key={rating.value}>
-                                  <Link
-                                    to={getFilterURL({rating: rating.value})}
-                                </li>
-                              ))}
-
-                              
-                            </ul>
-                          </div> */}
                         </Col>
                         <Col md={9}>
                           {loading ? (
@@ -856,14 +810,15 @@ const ProductSearchPage = () => {
           previousLabel={"← Previous"}
           nextLabel={"Next →"}
           pageCount={pages}
+          pageRangeDisplayed={1}
           pageClassName={"react-paginate-page-nums"}
           activeLinkClassName={"react-paginate-page-active"}
           onPageChange={handlePageClick}
-          selectedPageRel={"3"}
-          // forcePage={page}
+          initialPage={currentPageNum - 1}
           containerClassName={"pagination"}
           previousLinkClassName={"pagination__link"}
           nextLinkClassName={"pagination__link"}
+          nextClassName={"pagination__next"}
           disabledClassName={"pagination__link--disabled"}
           activeClassName={"pagination__link--active"}
         />

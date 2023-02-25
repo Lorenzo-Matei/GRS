@@ -152,18 +152,24 @@ function ProductPage() {
 
   const cloudFrontDistributionDomain =
     "https://dem6epkjrbcxz.cloudfront.net/test-products-images-nobg/";
-  const productImage = productData.images;
-  const data1 = [
-    { image: cloudFrontDistributionDomain + productImage },
+  // const productImages = productData.images;
+  // // console.log("productImages: ", productImages);
+  // // console.log("productImages[0]: ", productImages[0]);
 
-    // { image: cloudFrontDistributionDomain + testImage },
-    // { image: cloudFrontDistributionDomain + testImage },
-    // { image: cloudFrontDistributionDomain + testImage },
-    // { image: cloudFrontDistributionDomain + testImage },
-    // { image: cloudFrontDistributionDomain + testImage },
-    // { image: cloudFrontDistributionDomain + testImage },
-    // { image: cloudFrontDistributionDomain + testImage },
-  ];
+  // const data1 = [
+  //   { image: cloudFrontDistributionDomain + productImages },
+
+  //   // { image: cloudFrontDistributionDomain + testImage },
+  //   // { image: cloudFrontDistributionDomain + testImage },
+  // ];
+
+  var productImagesList = productData.images;
+  productImagesList = productData.images?.map(getImgObject);
+  console.log("images Objects: ", productImagesList);
+
+  function getImgObject(img) {
+    return { image: cloudFrontDistributionDomain + img };
+  }
 
   function infoAvailableCheck(dataField) {
     if (dataField.length > 0) {
@@ -364,7 +370,7 @@ function ProductPage() {
           <Carousel
             className="product-page-carousel"
             // data={`/assets/images/test-products-images-nobg/${productData.images}`}
-            data={data1}
+            data={productImagesList}
             time={200000}
             width="100%"
             height="500px"

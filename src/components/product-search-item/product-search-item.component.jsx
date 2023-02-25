@@ -186,8 +186,6 @@ function ProductSearchItem(props) {
         </div>
 
         <div className="rightside-product-item">
-          {/* <img className='floor-product-card-logo' src={Logo2} alt="logo"/> */}
-
           <Link to={`/products/${props.slug}`}>
             <p className="search-product-title">{props.name}</p>
 

@@ -123,7 +123,7 @@
 ////////////////////////
 .search-page-pagination-container {
   margin: 2% auto;
-  width: 50%;
+  width: fit-content;
   height: 20%;
   padding: 10px;
 
@@ -138,9 +138,11 @@
 .pagination {
   width: 100%;
   margin: auto;
+
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+
   list-style: none;
   cursor: pointer;
 }
@@ -149,26 +151,31 @@
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #fff;
-  color: #fff;
+  color: #ddd;
+}
+
+.pagination a:hover {
+  color: #007bff !important;
+  background-color: #ddd;
 }
 
 .pagination__link {
-  width: 100%;
+  display: inline-block;
+  align-items: center;
+  width: 100px;
   font-weight: bold;
+  text-align: center;
+  margin: 0 1rem;
 }
 
-.next {
-  position: relative;
-  height: fit-content;
-  top: 11px;
-  right: 15px;
-  //   padding: 0px;
-  //   margin: 0px;
+.pagination__link:hover {
+  background-color: #ddd !important;
+  color: #007bff !important;
 }
 
 .pagination__link--active a {
   color: #fff;
-  background: #fff;
+  background: #ddd;
 }
 
 .pagination__link--disabled a {

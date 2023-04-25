@@ -274,5 +274,5 @@ const productSchema = new mongoose.Schema( // mongoose.schema takes 2 parameters
 // now to create a model based on the schema above:
 // 1st param is the name of the model ('collection' in mongodb)
 // 2nd param is the schema to be used in this model
-const Product = mongoose.model("ProductTest", productSchema); //collection will be in all lowercase fyi
+const Product = mongoose.model("development-products", productSchema); //collection will be in all lowercase fyi
 export default Product;

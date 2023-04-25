@@ -6,10 +6,6 @@ import { Badge, Button } from "shards-react";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 // import Skeleton from "react-loading-skeleton";
 
-// import KitchenKnife from "../../assets/images/product-search/kitchen-knife.png";
-// import Logo from "../../assets/images/product-search/wusthof.png";
-// import Logo2 from "../../assets/images/product-search/wusthof2.png";
-
 import "./product-search-item.styles.scss";
 import { Store } from "../../Store";
 import axios from "axios";

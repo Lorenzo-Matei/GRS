@@ -152,20 +152,9 @@ function ProductPage() {
 
   const cloudFrontDistributionDomain =
     "https://dem6epkjrbcxz.cloudfront.net/test-products-images-nobg/";
-  // const productImages = productData.images;
-  // // console.log("productImages: ", productImages);
-  // // console.log("productImages[0]: ", productImages[0]);
-
-  // const data1 = [
-  //   { image: cloudFrontDistributionDomain + productImages },
-
-  //   // { image: cloudFrontDistributionDomain + testImage },
-  //   // { image: cloudFrontDistributionDomain + testImage },
-  // ];
 
   var productImagesList = productData.images;
   productImagesList = productData.images?.map(getImgObject);
-  console.log("images Objects: ", productImagesList);
 
   function getImgObject(img) {
     return { image: cloudFrontDistributionDomain + img };

@@ -300,7 +300,7 @@ const ProductSearchPage = () => {
     const filterSubCategory = filter.subCategory || subCategory;
     const filterMicroCategory = filter.microCategory || microCategory;
 
-    return `/search?category=${encodeURIComponent(
+    return `/${locationCountry}/search?category=${encodeURIComponent(
       filterCategory
     )}&subCategory=${encodeURIComponent(
       filterSubCategory
@@ -323,9 +323,9 @@ const ProductSearchPage = () => {
     window.scrollTo(0, 200);
   }
 
-  function displayVoltage(voltage) {
+  function displayVoltage(voltage, gas) {
     if (voltage !== "" && voltage !== null) {
-      return " and " + voltage + "V";
+      return " (" + voltage + "V)";
     } else {
       return "";
     }
@@ -790,7 +790,7 @@ const ProductSearchPage = () => {
                       product.modelVariant +
                       " " +
                       product.gasType +
-                      displayVoltage(product.voltage)
+                      displayVoltage(product.voltage, product.gasType)
                     }
                     brand={product.productBrand}
                     brandLogo={getBrandLogo(

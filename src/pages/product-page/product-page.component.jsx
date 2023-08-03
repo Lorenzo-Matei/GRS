@@ -55,9 +55,9 @@ const reducer = (state, action) => {
   }
 };
 
-function displayVoltage(voltage) {
+function displayVoltage(voltage, gas) {
   if (voltage !== "") {
-    return " and " + voltage + "V";
+    return " (" + voltage + "V)";
   } else {
     return "";
   }
@@ -158,7 +158,7 @@ function ProductPage() {
     productData.modelVariant +
     " " +
     productData.gasType +
-    displayVoltage(productData.voltage);
+    displayVoltage(productData.voltage, productData.gasType);
 
   const cloudFrontDistributionDomain =
     "https://dem6epkjrbcxz.cloudfront.net/test-products-images-nobg/";

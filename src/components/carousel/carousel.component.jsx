@@ -7,8 +7,6 @@ import "shards-ui/dist/css/shards.min.css";
 import { UncontrolledCarousel } from "reactstrap";
 import carouselExampleIndicators from "bootstrap";
 
-import knifePromo from "../carousel/wusthof-knife.jpg";
-
 const cloudFrontDistributionDomain =
   "https://dem6epkjrbcxz.cloudfront.net/promo-carousel/";
 

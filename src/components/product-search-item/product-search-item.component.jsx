@@ -151,7 +151,7 @@ function ProductSearchItem(props) {
         <div className="leftside-product-item">
           {/* <a> creates a link over the image that is clickable */}
           {/* The href is site directory + the slug from data */}
-          <Link to={`/products/${props.slug}`}>
+          <Link to={`/${props.country}/products/${props.slug}`}>
             <img
               className="product-card-image"
               src={props.image}
@@ -165,13 +165,13 @@ function ProductSearchItem(props) {
               alt={props.brand}
             />
           </div>
-          <Badge className="product-card-badge" outline theme="success">
+          {/* <Badge className="product-card-badge" outline theme="success">
             NEW!
-          </Badge>
+          </Badge> */}
           {fuelBadgeHandler(props.gasType)};
           <div className="product-card-overlay">
             <Link
-              to={`/products/${props.slug}`}
+              to={`/${props.country}/products/${props.slug}`}
               style={{ textDecoration: "None" }}
             >
               <h5 className="product-card-addinfo">
@@ -182,7 +182,7 @@ function ProductSearchItem(props) {
         </div>
 
         <div className="rightside-product-item">
-          <Link to={`/products/${props.slug}`}>
+          <Link to={`/${props.country}/products/${props.slug}`}>
             <p className="search-product-title">{props.name}</p>
 
             {/* <Rating

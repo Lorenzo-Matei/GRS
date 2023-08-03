@@ -1,0 +1,30 @@
+.country-selection-container {
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10.5px);
+  -webkit-backdrop-filter: blur(10.5px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 50%);
+
+  width: 300px;
+  height: 350px;
+  white-space: pre-wrap;
+  margin: auto;
+}
+
+.country-prompt-text {
+  color: red;
+  width: 100%;
+  overflow-wrap: break-word;
+  text-align: center;
+}
+
+.country-selection-btns {
+  margin: auto;
+  text-align: center;
+}

@@ -1,4 +1,5 @@
-.carousel, .slide,
+.carousel,
+.slide,
 .carousel .carousel-inner,
 .carousel .carousel-item,
 .carousel .carousel-item img,
@@ -8,8 +9,12 @@
   // border: solid 0.1px #fff;
 }
 
-.promo-carousel{
-    width: 90%;
-    padding: 2% 0% 2% 0%;
-  
+.promo-carousel {
+  width: 90%;
+  padding: 2% 0% 2% 0%;
+}
+.promo-carousel img {
+  image-rendering: optimizeQuality;
+  height: fit-content;
+  // max-height: 450px;
 }

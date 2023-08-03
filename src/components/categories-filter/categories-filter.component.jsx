@@ -35,10 +35,8 @@ const CategoriesFilter = () => {
         toast.error(getError(err));
       }
     };
-    //
-    //
+
     fetchCategories();
-    // productCategories();
   }, []);
 
   return (

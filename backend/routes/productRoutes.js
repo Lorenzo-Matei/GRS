@@ -15,7 +15,7 @@ productRouter.get("/", async (req, res) => {
 
 ////////////////////////////////  new version  ///////////////////////////////////////////////////
 /////////////////////////// 2nd version of category or search Router ////////////////////////
-const PAGE_SIZE = 16;
+const PAGE_SIZE = 24;
 productRouter.get(
   "/search",
   expressAsyncHandler(async (req, res) => {
@@ -209,7 +209,7 @@ productRouter.get(
 
     console.log("\nfull dictionary: \n", categoriesDictObj);
 
-    res.send(categories);
+    res.send(categoriesDictObj);
   })
 );
 //////////////////////////  End of 1st version of categoryRoute  /////////////////////////////////////////
@@ -217,7 +217,7 @@ productRouter.get(
 productRouter.get(
   "/categories2",
   expressAsyncHandler(async (req, res) => {
-    const categoriesDictObj = { all: { label: "All", nodes: {} } };
+    const categoriesDictObj = { All: { label: "All", nodes: {} } };
     const categories = await Product.find().distinct("productCategory"); // finds distinct and unique categories without duplicates
 
     for (let index = 0; index < categories.length; index++) {

@@ -29,42 +29,8 @@
 .search-item-cardbody-container {
   display: flex;
 }
-
-///////////////////////////////////////////
-
-// .product-card-overlay {
-//   position: absolute;
-//   bottom: 0;
-//   left: 0;
-//   right: 0;
-//   background-color: #ddd;
-//   overflow: hidden;
-//   width: 0;
-//   height: 100%;
-//   z-index: 15;
-
-// }
-
-// .product-card-addInfo {
-//   white-space: nowrap;
-//   color: red;
-//   font-size: 20px;
-//   position: absolute;
-//   overflow: hidden;
-//   top: 50%;
-//   left: 50%;
-//   z-index: 15;
-
-// }
-
-// .leftside-product-item:hover .product-card-overlay {
-//   width: inherit;
-//   border-radius: inherit;
-//   border-radius: 10px 50% 50% 10px;
-//   // object-fit: contain;
-// }
-///////////////////////////////////////////////////////
-
+/////////////////////////////////////////////////////////////////////////
+///
 .product-card-overlay {
   background: rgba(255, 255, 255, 0.3);
   box-shadow: 1px 8px 32px 0 rgba(65, 66, 83, 0.37);

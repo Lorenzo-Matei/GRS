@@ -1,6 +1,11 @@
 import axios from "axios";
 import { useContext, useEffect, useReducer, useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 // import { Carousel } from "react-carousel-minimal";
 // import { Carousel } from "react-responsive-carousel";
@@ -58,6 +63,7 @@ function displayVoltage(voltage) {
   }
 }
 function ProductPage() {
+  //////////////////////////////////////////////////////////////////  component start
   const captionStyle = {
     fontSize: "2em",
     fontWeight: "bold",
@@ -75,6 +81,10 @@ function ProductPage() {
   const navigate = useNavigate();
   const params = useParams(); //this enables you to grab the productsData params or variables
   const { slug } = params; //this gets the slug variable from productData
+
+  const location = useLocation();
+  const locationPath = location.pathname;
+  const locationCountry = locationPath.split("/")[1];
 
   ////////////////////////////////////   copied from products-page-component  //////////////////////////
   const [{ loading, error, productData }, dispatch] = useReducer(reducer, {
@@ -337,6 +347,17 @@ function ProductPage() {
       </Collapsible>
     ) : null;
   }
+
+  function getCountryPrice(priceArray) {
+    const USA = "usa";
+    const CAN = "can";
+    if (locationCountry.toLowerCase == CAN) {
+      return priceArray[0];
+    } else {
+      return priceArray[1];
+    }
+    // product.onlinePrice[0]
+  }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////   copied from products-page-component  //////////////////////////
@@ -431,7 +452,9 @@ function ProductPage() {
           </Badge> */}
 
           <h3 id="product-page-price">
-            {callForPriceCheck(productData.onlinePrice[0].toFixed(2))}
+            {callForPriceCheck(
+              getCountryPrice(productData.onlinePrice).toFixed(2)
+            )}
           </h3>
 
           <Button

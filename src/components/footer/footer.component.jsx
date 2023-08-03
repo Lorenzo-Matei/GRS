@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "shards-react";
+import { Button, NavItem } from "shards-react";
 import "./footer.styles.scss";
 import {
   FaFacebookF,
@@ -11,10 +11,41 @@ import {
   FaCcVisa,
   FaCcMastercard,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 // import { } from
 
 const Footer = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  function getCountryParam() {
+    const country = location.pathname.split("/")[1];
+
+    return country;
+  }
+
+  function changeCountry() {
+    getCountryParam() === "USA" ? navigate(`/CAN/home`) : navigate(`/USA/home`);
+    // navigate(`/${country}`);
+    // console.log("country selected: ", country);
+  }
+
+  function changeCountryIcon() {
+    if (getCountryParam() === "USA") {
+      return <span class="fi fi-ca" id="country-flag" />;
+    } else {
+      return <span class="fi fi-us" id="country-flag" />;
+    }
+  }
+
+  function getCountryIcon() {
+    if (getCountryParam() === "USA") {
+      return <span class="fi fi-us" id="country-flag" />;
+    } else {
+      return <span class="fi fi-ca" id="country-flag" />;
+    }
+  }
+
   return (
     <div className="footer-container">
       <div className="footer-category">
@@ -126,6 +157,24 @@ const Footer = () => {
         <h1 className="footer-title">We Accept</h1>
         <FaCcVisa size={70} className="footer-icons-payment" />
         <FaCcMastercard size={70} className="footer-icons-payment" />
+      </div>
+      <div className="footer-category">
+        <NavItem>
+          {/* <Link to={`/${country}`}> */}
+          <button
+            type="button"
+            class="btn btn-outline-light btn-pill nav-btn"
+            onClick={() => {
+              changeCountry();
+              // setCountryChangePromptOpen(!countryChangePromptOpen);
+              // console.log("country state: ", countryChangePromptOpen);
+            }}
+          >
+            {changeCountryIcon()}
+            Site
+          </button>
+          {/* </Link> */}
+        </NavItem>
       </div>
     </div>
   );

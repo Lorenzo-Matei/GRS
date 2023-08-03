@@ -5,6 +5,7 @@ import {
   Route,
   Redirect,
   Routes,
+  Navigate,
 } from "react-router-dom";
 
 import { ToastContainer } from "react-toastify";
@@ -52,22 +53,28 @@ const App = () => {
           <AiFillWarning />
         </Alert>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/products" element={<ProductSearchPage />} />
-          <Route path="/products/:slug" element={<ProductPage />} />{" "}
+          <Route path="/" element={<Navigate to="/CAN/home" />} />
+          <Route path="/CAN/home" element={<HomePage />} />
+          <Route path="/CAN/products" element={<ProductSearchPage />} />
+          <Route path="/CAN/products/:slug" element={<ProductPage />} />{" "}
           {/* :slug    is a parameter/argument/variable that is inserted from the product slug */}
-          <Route path="/search" element={<ProductSearchPage />} />
-          <Route path="/shop" element={<ProductListingsPage />} />
-          <Route path="/showroom" element={<Showroom />} />
-          <Route path="/contact-us" element={<ContactPage />} />
-          <Route path="/sign-in" element={<SignInPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/cart:id" element={<CartPage />} />
-          {/* <Route
-            render={({ history }) => (
-              <ExpandingSearchBox history={history}></ExpandingSearchBox>
-            )}
-          /> */}
+          <Route path="/CAN/search" element={<ProductSearchPage />} />
+          {/* <Route path="/shop" element={<ProductListingsPage />} /> */}
+          <Route path="/CAN/showroom" element={<Showroom />} />
+          <Route path="/CAN/contact-us" element={<ContactPage />} />
+          <Route path="/CAN/sign-in" element={<SignInPage />} />
+          <Route path="/CAN/cart" element={<CartPage />} />
+          <Route path="/CAN/cart:id" element={<CartPage />} />
+          {/*  */}
+          <Route path="/USA/home" element={<HomePage />}></Route>
+          <Route path="/USA/products" element={<ProductSearchPage />} />
+          <Route path="/USA/products/:slug" element={<ProductPage />} />
+          <Route path="/USA/search" element={<ProductSearchPage />} />
+          <Route path="/USA/showroom" element={<Showroom />} />
+          <Route path="/USA/contact-us" element={<ContactPage />} />
+          <Route path="/USA/sign-in" element={<SignInPage />} />
+          <Route path="/USA/cart" element={<CartPage />} />
+          <Route path="/USA/cart:id" element={<CartPage />} />
         </Routes>
         <Footer />
       </Router>

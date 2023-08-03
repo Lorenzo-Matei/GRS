@@ -157,6 +157,10 @@ const ProductSearchPage = () => {
   const phase = searchParams.get("phase") || "all";
   const voltage = searchParams.get("voltage") || "all";
 
+  const location = useLocation();
+  const locationPath = location.pathname;
+  const locationCountry = locationPath.split("/")[1];
+
   const subCategory = searchParams.get("subCategory") || "all";
   const microCategory = searchParams.get("microCategory") || "all";
 
@@ -228,7 +232,6 @@ const ProductSearchPage = () => {
       try {
         const { data } = await axios.get(`/api/products/brands`);
         setBrandsList(data);
-        console.log("brands List: ", data);
       } catch (err) {
         toast.error(getError(err));
       }
@@ -243,7 +246,6 @@ const ProductSearchPage = () => {
       try {
         const { data } = await axios.get(`/api/products/gasType`);
         setGasTypeList(data);
-        console.log("brands List: ", data);
       } catch (err) {
         toast.error(getError(err));
       }
@@ -258,7 +260,6 @@ const ProductSearchPage = () => {
       try {
         const { data } = await axios.get(`/api/products/phase`);
         setPhaseList(data);
-        console.log("phase List: ", data);
       } catch (err) {
         toast.error(getError(err));
       }
@@ -273,7 +274,6 @@ const ProductSearchPage = () => {
       try {
         const { data } = await axios.get(`/api/products/voltage`);
         setVoltageList(data);
-        console.log("voltage List: ", data);
       } catch (err) {
         toast.error(getError(err));
       }
@@ -300,8 +300,6 @@ const ProductSearchPage = () => {
     const filterSubCategory = filter.subCategory || subCategory;
     const filterMicroCategory = filter.microCategory || microCategory;
 
-    console.log("filter object: ", filter);
-
     return `/search?category=${encodeURIComponent(
       filterCategory
     )}&subCategory=${encodeURIComponent(
@@ -326,7 +324,7 @@ const ProductSearchPage = () => {
   }
 
   function displayVoltage(voltage) {
-    if (voltage !== "") {
+    if (voltage !== "" && voltage !== null) {
       return " and " + voltage + "V";
     } else {
       return "";
@@ -371,6 +369,17 @@ const ProductSearchPage = () => {
 
         return params;
     }
+  }
+
+  function getCountryPrice(priceArray) {
+    const USA = "usa";
+    const CAN = "can";
+    if (locationCountry.toLowerCase == CAN) {
+      return priceArray[0];
+    } else {
+      return priceArray[1];
+    }
+    // product.onlinePrice[0]
   }
 
   // const pageCount = Math.ceil(productsData.length / PER_PAGE);
@@ -769,6 +778,7 @@ const ProductSearchPage = () => {
 
                 {productsData.map((product) => (
                   <ProductSearchItem
+                    country={locationCountry}
                     key={product.slug}
                     _id={product._id}
                     slug={product.slug}
@@ -787,13 +797,10 @@ const ProductSearchPage = () => {
                       cloudFrontDistributionLogosDomain,
                       product.productBrand
                     )}
-                    // image={product.image}
-                    // image={`/assets/images/test-products-images-nobg/${product.images[0]}`}
                     image={
                       cloudFrontDistributionInventoryDomain + product.images[0]
                     }
-                    // rating={product.rating}
-                    price={product.onlinePrice[0]}
+                    price={getCountryPrice(product.onlinePrice)}
                     gasType={product.gasType}
                     countInStock={product.inStock}
                     additionalInfo={product.additionalInfo}

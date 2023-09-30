@@ -15,7 +15,7 @@ productRouter.get("/", async (req, res) => {
 
 ////////////////////////////////  new version  ///////////////////////////////////////////////////
 /////////////////////////// 2nd version of category or search Router ////////////////////////
-const PAGE_SIZE = 24;
+const PAGE_SIZE = 8;
 productRouter.get(
   "/search",
   expressAsyncHandler(async (req, res) => {
@@ -38,37 +38,6 @@ productRouter.get(
     const queryFilter =
       searchQuery && searchQuery !== "all" //if query exists and query !== all
         ? {
-            /////////////////////////// uses mongodb atlas ////////////////////////////////
-
-            // $search: {
-            //   // index: "SearchBars",
-            //   text: {
-            //     query: { $regex: searchQuery, options: "i" },
-            //     path: [
-            //       "productName",
-            //       "modelVariant",
-            //       "productBrand",
-            //       "storeSKU",
-            //       "gasType",
-            //       "phase",
-            //       "voltage",
-            //       "BTU",
-            //       "amps",
-            //     ],
-            //     score: {
-            //       boost: {
-            //         value: 5,
-            //       },
-            //     },
-            //   },
-            // },
-            // $addFields: {
-            //   score: {
-            //     $meta: "searchScore",
-            //   },
-            // },
-            /////////////////////////// uses mongodb atlas (end) ////////////////////////////////
-
             $text: {
               $search: searchQuery,
               $caseSensitive: false,
@@ -234,17 +203,30 @@ productRouter.get(
         subCatIndex++
       ) {
         const subCategory = subCategories[subCatIndex];
-        // const microCategories = …;
+        const microCategories = await Product.find({
+          // productCategory: category,
+          productSubCategory: subCategory,
+        }).distinct("productMicroCategory");
 
         subCategoriesDictObj[subCategory] = { label: subCategory };
+
+        const microCategoriesDict = {};
+        for (
+          let microCatIndex = 0;
+          microCatIndex < microCategories.length;
+          microCatIndex++
+        ) {
+          const microCategory = microCategories[microCatIndex];
+          microCategoriesDict[microCategory] = { label: microCategory };
+        }
+
+        subCategoriesDictObj[subCategory]["nodes"] = microCategoriesDict;
       }
       categoriesDictObj[category] = { label: category };
       categoriesDictObj[category]["nodes"] = subCategoriesDictObj;
     }
 
-    toast.error("test 123");
-
-    console.log("\nfull dictionary: \n", categoriesDictObj);
+    console.log("\nfull categories2 dictionary: \n", categoriesDictObj);
 
     //    query and organize V1:
     ////////////////////////////////////
@@ -304,7 +286,7 @@ productRouter.get(
   "/brands",
   expressAsyncHandler(async (req, res) => {
     const brands = await Product.find().distinct("productBrand"); // finds distinct and unique categories without duplicates
-    console.log("Brands: ", brands);
+    // console.log("Brands: ", brands);
     res.send(brands);
   })
 );
@@ -313,7 +295,7 @@ productRouter.get(
   "/gasType",
   expressAsyncHandler(async (req, res) => {
     const gasType = await Product.find().distinct("gasType"); // finds distinct and unique categories without duplicates
-    console.log("gasType: ", gasType);
+    // console.log("gasType: ", gasType);
     res.send(gasType);
   })
 );
@@ -322,7 +304,7 @@ productRouter.get(
   "/phase",
   expressAsyncHandler(async (req, res) => {
     const phase = await Product.find().distinct("phase"); // finds distinct and unique categories without duplicates
-    console.log("phase: ", phase);
+    // console.log("phase: ", phase);
     res.send(phase);
   })
 );
@@ -331,7 +313,7 @@ productRouter.get(
   "/voltage",
   expressAsyncHandler(async (req, res) => {
     const voltage = await Product.find().distinct("voltage"); // finds distinct and unique categories without duplicates
-    console.log("voltage: ", voltage);
+    // console.log("voltage: ", voltage);
     res.send(voltage);
   })
 );

@@ -12,6 +12,9 @@
   -webkit-backdrop-filter: blur(3.5px);
   border-radius: 10px;
   border: 0px solid rgba(255, 255, 255, 0.18);
+
+  transform: translateZ(0);
+  will-change: opacity;
 }
 
 .search-item-cardbody {
@@ -39,6 +42,9 @@
   border-radius: 10px;
   border: 0px solid rgba(255, 255, 255, 0.18);
 
+  transform: translateZ(0);
+  will-change: opacity;
+
   position: absolute;
   bottom: 0;
   left: 0;
@@ -51,7 +57,7 @@
   transform: scaleX(0.95);
   transform-origin: left;
 
-  transition: linear 0.1s;
+  transition: linear 0s;
 }
 
 .product-card-addinfo {

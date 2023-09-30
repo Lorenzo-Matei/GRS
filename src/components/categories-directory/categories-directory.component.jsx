@@ -7,15 +7,22 @@ const cloudFrontMiscImages = "https://dem6epkjrbcxz.cloudfront.net/misc/";
 function CategoriesDirectory() {
   const navigate = useNavigate();
   const { search } = useLocation();
+  const location = useLocation();
   const searchParams = new URLSearchParams(search); // if url is /search/?category=shirts then searches for shirts
   const category = searchParams.get("category") || "all"; //returns items in that category, otherwise return null or all items.
   const subCategory = searchParams.get("subCategory") || "all";
   const microCategory = searchParams.get("microCategory") || "all";
 
+  function getCountryParam() {
+    const country = location.pathname.split("/")[1];
+
+    return country;
+  }
+
   const getFilterURL = (filter) => {
     const filterCategory = filter.category || category;
 
-    return `/search?category=${encodeURIComponent(
+    return `/${getCountryParam()}/search?category=${encodeURIComponent(
       filterCategory
     )}&subCategory=all&microCategory=all&query=all&price=all&rating=all&order=all&page=1`;
   };

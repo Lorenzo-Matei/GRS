@@ -65,7 +65,7 @@ function NavDropdownMenu(props) {
       filterSubCategory
     )}&microCategory=${encodeURIComponent(
       filterMicroCategory
-    )}&query=all&price=all&rating=all&order=all&page=1`;
+    )}&query=all&price=all&brands=all&gasType=all&phase=all&voltage=all&rating=all&order=newest&page=1`;
   };
 
   useEffect(() => {

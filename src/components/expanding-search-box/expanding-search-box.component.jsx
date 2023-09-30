@@ -1,21 +1,29 @@
 import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import "./expanding-search-box.styles.scss";
 
 function ExpandingSearchBox() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [query, setQuery] = useState(""); // state for the search entered by user
+
+  function getCountryParam() {
+    const country = location.pathname.split("/")[1];
+
+    return country;
+  }
 
   const submitHandler = (e) => {
     e.preventDefault();
     // navigate(`/products/query/${query}`); //alternate
     navigate(
       query
-        ? `/search?category=all&subCategory=all&microCategory=all&query=${query}&price=all&rating=all&order=relevant&page=1`
-        : "/search"
+        ? `/${getCountryParam()}/search?category=all&subCategory=all&microCategory=all&query=${query}&price=all&rating=all&order=relevant&page=1`
+        : `/${getCountryParam()}}/search`
     ); //previous code
   };
 

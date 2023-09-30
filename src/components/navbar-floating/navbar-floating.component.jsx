@@ -83,15 +83,19 @@ const NavBarFloating = () => {
       try {
         const response = await axios.get("http://ip-api.com/json");
         setipCountry((prevCountry) => (prevCountry = response.data.country));
-        console.log("ip country: ", ipCountry);
+        // console.log("ip country: ", ipCountry);
       } catch (error) {
         console.error("Error fetching country :", error);
       }
     };
 
-    // fetchCountry();
-    // redirectSiteToCountry();
+    fetchCountry();
+    redirectSiteToCountry();
   }, []);
+
+  useEffect(() => {
+    console.log("ip country: ", ipCountry);
+  }, [ipCountry]);
 
   function redirectSiteToCountry() {
     const urlPath = location.pathname;
@@ -269,6 +273,7 @@ const NavBarFloating = () => {
                 <ExpandingSearchBox />
               </NavItem>
             </Nav>
+            {getCountryIcon()}
           </Collapse>
         </Navbar>
         {/* {countryChangePromptOpen && <CountrySelection country={country} />} */}

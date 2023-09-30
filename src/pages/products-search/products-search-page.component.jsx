@@ -1,7 +1,16 @@
 import { useState, useEffect, useRef, useReducer, useCallback } from "react";
 import { CSSTransition } from "react-transition-group";
 
-import { Button, Card, CardBody, Col, Row } from "shards-react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardImg,
+  CardSubtitle,
+  CardTitle,
+  Col,
+  Row,
+} from "shards-react";
 import { BsFilterCircle } from "react-icons/bs";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import LoadingPageAnimation from "../../components/loading-page-animation/loading-page-animation.component";
@@ -193,7 +202,7 @@ const ProductSearchPage = () => {
         });
       }
     };
-    fetchData();
+    return fetchData(); // the return is added to only run the one instance and dismount/cleanup otherwise will run twice
   }, [
     category,
     subCategory,
@@ -308,6 +317,19 @@ const ProductSearchPage = () => {
       filterMicroCategory
     )}&query=${filterQuery}&price=${filterPrice}&brands=${filterBrands}&gasType=${filterGasType}&phase=${filterPhase}&voltage=${filterVoltage}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
   };
+
+  useEffect(() => {
+    console.log("filter changed");
+  }, [
+    category,
+    subCategory,
+    microCategory,
+    brands,
+    gasType,
+    phase,
+    voltage,
+    query,
+  ]);
 
   ///////////////////////////////////////////////////////////////////
   // ** gotta get props through to filters component
@@ -508,7 +530,9 @@ const ProductSearchPage = () => {
                                   className="reset-filters-button"
                                   outline
                                   theme="danger"
-                                  onClick={() => navigate("/search")}
+                                  onClick={() =>
+                                    navigate(`/${locationCountry}/search`)
+                                  }
                                 >
                                   Reset
                                 </Button>
@@ -579,23 +603,27 @@ const ProductSearchPage = () => {
                                 </Link>
                               </li>
 
-                              {brandsList.map((brand) => (
-                                <li key={brand} className="filter-item">
-                                  <Link
-                                    to={getFilterURL({
-                                      brands: brand,
-                                      page: 1,
-                                    })}
-                                    className={
-                                      brand === brands
-                                        ? "font-weight-bold"
-                                        : "filter-item"
-                                    }
-                                  >
-                                    {brand}
-                                  </Link>
-                                </li>
-                              ))}
+                              {brandsList.map(
+                                (
+                                  brand // BRANDS WILL BE DETERMINED BY A .distinct with existing filters.
+                                ) => (
+                                  <li key={brand} className="filter-item">
+                                    <Link
+                                      to={getFilterURL({
+                                        brands: brand,
+                                        page: 1,
+                                      })}
+                                      className={
+                                        brand === brands
+                                          ? "font-weight-bold"
+                                          : "filter-item"
+                                      }
+                                    >
+                                      {brand}
+                                    </Link>
+                                  </li>
+                                )
+                              )}
                             </ul>
                           </div>
 

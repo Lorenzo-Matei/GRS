@@ -11,8 +11,10 @@
 
 .product-search-card {
   width: 90%;
-  height: 100%;
   margin: auto;
+
+  // background: rgb(0, 0, 0);
+  // opacity: 0.8;
 
   background: rgba(0, 0, 0, 0.55);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -20,6 +22,9 @@
   -webkit-backdrop-filter: blur(11.5px);
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.18);
+  transform: translateZ(0);
+  will-change: opacity;
+  will-change: filter;
 
   overflow: visible;
 }
@@ -133,6 +138,9 @@
   -webkit-backdrop-filter: blur(11.5px);
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.18);
+
+  transform: translateZ(0);
+  will-change: opacity;
 }
 
 .pagination {
@@ -140,10 +148,11 @@
   margin: auto;
 
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+  row-gap: 15px;
 
-  list-style: none;
   cursor: pointer;
 }
 
@@ -192,16 +201,32 @@
   // border-style: solid 1px white;
 }
 
-.rstm-tree-item-level0 {
-  padding-left: 0rem !important;
+.rstm-search {
+  color: #ddd;
 }
 
-.rstm-tree-item-level0 {
-  padding-left: 0rem !important;
+.rstm-tree-item {
+  align-items: center;
 }
 
 .rstm-toggle-icon {
-  padding-right: 2rem !important;
+  display: flex;
+  justify-content: center; /* Horizontally center the content */
+  align-items: center; /* Vertically center the content */
+  margin-right: 1rem !important;
+  justify-content: center;
+}
+
+.rstm-toggle-icon:hover {
+  border: 1px solid #007bff;
+  border-radius: 100px;
+}
+
+.rstm-toggle-icon-symbol {
+  position: relative;
+  font-size: 1.7rem !important;
+  justify-content: center !important;
+  margin-left: 8px;
 }
 
 .filter-item {

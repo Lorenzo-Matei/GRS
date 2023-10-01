@@ -53,12 +53,12 @@ const CategoriesFilter = () => {
           <NavItem>
             <TreeMenu
               data={categories}
-              // onClickItem={({ key, label, ...props }) => {
-              //   // <Link to={`/home`}></Link>;
-              //   // <NavLink href="/test-category"></NavLink>;
-              //   alert(`/category/${key}`);
-              //   // setCategoryFilter(label);
-              // }}
+              onClickItem={({ key, label, ...props }) => {
+                <Link to={`/home`}></Link>;
+                // <NavLink href="/test-category"></NavLink>;
+                alert(`/category/${key}`);
+                // setCategoryFilter(label);
+              }}
             >
               {/* <Link to=""></Link> */}
             </TreeMenu>

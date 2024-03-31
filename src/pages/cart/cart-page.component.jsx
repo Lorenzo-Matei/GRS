@@ -17,11 +17,12 @@ import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 import "./cart-page.styles.scss";
 import axios from "axios";
 import ProductPage from "../product-page/product-page.component";
+import toBeQuoted from "../../util";
 
 const cloudFrontDistributionDomain =
   "https://dem6epkjrbcxz.cloudfront.net/test-products-images-nobg/";
 
-const CartPage = () => {
+const CartPage = ({ userCountry }) => {
   const navigate = useNavigate();
   const { state, dispatch: ctxdispatch } = useContext(Store); //this will access to store and variables in cart from the backend
 
@@ -52,8 +53,24 @@ const CartPage = () => {
   const checkoutHandler = () => {
     //1st -> checks if they are signedin/authenticated
     // if they arent authenticated then they will be redirected to the shipping page.
-    navigate("/sign-in?redirect=/shipping");
+    navigate(`/${userCountry}/sign-in?redirect=/${userCountry}/shipping`);
   };
+
+  function quoteDisclaimerCheck() {
+    for (let item = 0; item < cartItems.length; item++) {
+      if (cartItems[item].onlinePrice[0] <= 0) {
+        return (
+          <div className="price-disclaimer-container">
+            <h5 id="price-disclaimer-text">
+              Please note that if any of your items require quoting, finish the
+              checkout, and we will email you a quote. No payment or purchase
+              will be conducted on those items until quote is received.
+            </h5>
+          </div>
+        );
+      }
+    }
+  }
 
   function displayVoltage(voltage) {
     if (voltage !== "") {
@@ -63,15 +80,6 @@ const CartPage = () => {
     }
   }
 
-  // const productFullName =
-  //   item.productBrand +
-  //   " " +
-  //   item.productName +
-  //   " " +
-  //   item.modelVariant +
-  //   " " +
-  //   item.gasType;
-
   return (
     <div className="cart-page-container">
       {/* ---------------------------------------- */}
@@ -80,8 +88,8 @@ const CartPage = () => {
       </Helmet>
       {/* ---------------------------------------- */}
       {/* <h1>This is the Cart Page.</h1> */}
-
-      <Row>
+      <div className="cart-page-wrapper">
+        {/* <Row> */}
         {/* <div className="cart-page-items-container"> */}
         <Col md={8} className="cart-page-items-container">
           {cartItems.length === 0 ? ( //if cartItems is 0 then show error message
@@ -93,10 +101,11 @@ const CartPage = () => {
               <ListGroupItem className="cart-page-title-container">
                 <h1 className="cart-page-title">Shopping Cart</h1>
               </ListGroupItem>
+              {console.log("cart items: ", cartItems)}
               {cartItems.map((item) => (
                 <ListGroupItem key={item._id} className="cart-page-cart-item">
                   <Row className="align-items-center">
-                    <Col md={2}>
+                    <Col className="col-item-element" md={2}>
                       <img
                         src={cloudFrontDistributionDomain + item.images[0]}
                         alt={item.images[0]}
@@ -104,11 +113,11 @@ const CartPage = () => {
                       ></img>{" "}
                     </Col>
 
-                    <Col md={2}>
+                    <Col className="col-item-element" md={2}>
                       {/*  {" "} -> this creates a space between elements */}
                       <Link
                         id="cart-page-item-name"
-                        to={`/product/${item.slug}`}
+                        to={`/${userCountry}/products/${item.slug}`}
                       >
                         {item.productBrand +
                           " " +
@@ -120,7 +129,7 @@ const CartPage = () => {
                           displayVoltage(item.voltage)}
                       </Link>
                     </Col>
-                    <Col md={3}>
+                    <Col className="col-item-element" md={3}>
                       <Button // decrease '-' quantity button
                         outline
                         pill
@@ -157,12 +166,12 @@ const CartPage = () => {
                       </Button>
                     </Col>
 
-                    <Col md={4}>
-                      <h3 className="cart-page-price">
-                        $ {item.onlinePrice[0].toFixed(2)}
-                      </h3>
+                    <Col className="col-item-element" md={4}>
+                      <h5 className="cart-page-price">
+                        $ {toBeQuoted(item.onlinePrice[0].toFixed(2))}
+                      </h5>
                     </Col>
-                    <Col md={1}>
+                    <Col className="col-item-element" md={1}>
                       <Button // trash item button
                         outline
                         pill
@@ -177,12 +186,13 @@ const CartPage = () => {
                 </ListGroupItem>
               ))}
             </ListGroup>
+            // console.log("test")
           )}
         </Col>
         {/* </div> */}
         <Col md={4} className="cart-page-checkout-container">
-          {/* <Card className="cart-page-totals-card">
-            <CardBody> */}
+          {quoteDisclaimerCheck()}
+
           <div>
             <ListGroup flush="true">
               <ListGroupItem className="cart-page-checkout-listgroupitem">
@@ -194,7 +204,7 @@ const CartPage = () => {
                   )}{" "}
                   items)
                 </h4>
-                <h4 className="cart-page-subtotal-title">
+                <h5 className="cart-page-subtotal-title">
                   $
                   {cartItems.reduce(
                     (accumulator, cart) =>
@@ -202,11 +212,11 @@ const CartPage = () => {
                       cart.onlinePrice[0].toFixed(2) * cart.quantity,
                     0
                   )}
-                </h4>
+                </h5>
               </ListGroupItem>
               <ListGroupItem className="cart-page-checkout-listgroupitem">
-                <h4 className="cart-page-tax">Tax (13%)</h4>
-                <h4 className="cart-page-tax">
+                <h4 className="cart-page-tax">Tax</h4>
+                <h5 className="cart-page-tax">
                   $
                   {cartItems.reduce(
                     (accumulator, cart) =>
@@ -217,11 +227,11 @@ const CartPage = () => {
                       ).toFixed(2),
                     0
                   )}
-                </h4>
+                </h5>
               </ListGroupItem>
               <ListGroupItem className="cart-page-checkout-listgroupitem">
                 <h3 className="cart-page-total">Total</h3>
-                <h3 className="cart-page-total">
+                <h5 className="cart-page-total">
                   $
                   {cartItems.reduce(
                     (accumulator, cart) =>
@@ -232,7 +242,7 @@ const CartPage = () => {
                       ).toFixed(2),
                     0
                   )}
-                </h3>
+                </h5>
               </ListGroupItem>
 
               <ListGroupItem className="cart-page-checkout-listgroupitem">
@@ -242,10 +252,10 @@ const CartPage = () => {
                     type="button"
                     theme="success"
                     onClick={checkoutHandler}
-                    // disabled={cartItems.length === 0} //if no items in cart, button doesnt work
-                    disabled
+                    disabled={cartItems.length === 0} //if no items in cart, button doesnt work
+                    // disabled
                   >
-                    Call To Place Order
+                    Checkout
                     {/* Proceed to Checkout */}
                   </Button>
                 </div>
@@ -255,7 +265,8 @@ const CartPage = () => {
           {/* </CardBody>
           </Card> */}
         </Col>
-      </Row>
+        {/* </Row> */}
+      </div>
     </div>
   );
 };

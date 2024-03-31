@@ -6,7 +6,7 @@ index 2833731..d50529e 100644
      }
    }, data.map((item, index) => {
      return /*#__PURE__*/_react.default.createElement("div", {
--      className: "carousel-item fade",
+-      className: "carousel-item",
 +      className: "carousel-item",
        style: {
          maxWidth: width ? width : "600px",

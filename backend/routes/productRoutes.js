@@ -15,7 +15,7 @@ productRouter.get("/", async (req, res) => {
 
 ////////////////////////////////  new version  ///////////////////////////////////////////////////
 /////////////////////////// 2nd version of category or search Router ////////////////////////
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 25;
 productRouter.get(
   "/search",
   expressAsyncHandler(async (req, res) => {
@@ -228,59 +228,38 @@ productRouter.get(
 
     console.log("\nfull categories2 dictionary: \n", categoriesDictObj);
 
-    //    query and organize V1:
-    ////////////////////////////////////
-
-    // let categoriesDictObj = {};
-
-    // for (var index = 0; index < categories.length; index++) {
-    //   let category = categories[index];
-    //   console.log("category: ", category);
-
-    //   const subCategories = await Product.find({
-    //     productCategory: category,
-    //   }).distinct("productSubCategory");
-
-    //   console.log(category + "- subcategories: ", subCategories);
-
-    //   categoriesDict[category] = {};
-    //   console.log("\ndictionary with categories: \n", categoriesDict);
-    //   console.log("\n");
-
-    //   // categoriesDictObj = { category };
-
-    //   for (
-    //     var subCatIndex = 0;
-    //     subCatIndex < subCategories.length;
-    //     subCatIndex++
-    //   ) {
-    //     let subCategory = subCategories[subCatIndex];
-
-    //     const microCategories = await Product.find({
-    //       productMicroCategory: subCategory,
-    //     }).distinct("productMicroCategory");
-
-    //     console.log(subCategory + "- microCategories: ", microCategories);
-
-    //     if (microCategories.length > 0) {
-    //       pass;
-    //     }
-
-    //     categoriesDictObj = {
-    //       ...categoriesDictObj,
-    //       [category]: {
-    //         ...categoriesDictObj[category],
-    //         [subCategory]: subCatIndex,
-    //       },
-    //     };
-    //   }
-    //   // categoriesDictObj[category] = null;
-    // }
-
     res.send(categoriesDictObj);
   })
 );
 //////////////////////////  End of 1st version of categoryRoute  /////////////////////////////////////////
+
+productRouter.get(
+  "/productVariants",
+  expressAsyncHandler(async (req, res) => {
+    const brand = req.query.productBrand; // gets productBrand from product page
+    const name = req.query.productName;
+    try {
+      const variants = await Product.find({
+        productBrand: brand,
+        productName: name,
+      });
+      res.json(variants);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "internal server error for productVariants get" });
+    }
+  })
+);
+
+productRouter.get(
+  "/mainCategories",
+  expressAsyncHandler(async (req, res) => {
+    const categories = await Product.find().distinct("productCategory");
+
+    res.send(categories);
+  })
+);
 
 productRouter.get(
   "/brands",

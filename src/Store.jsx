@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { createContext, useReducer } from "react";
 
 export const Store = createContext();
@@ -8,6 +9,13 @@ const initialState = {
     : null,
 
   cart: {
+    shippingAddress: localStorage.getItem("shippingAddress") // get the existing shipping address if already cached
+      ? JSON.parse(localStorage.getItem("shippingAddress"))
+      : {}, // if doesnt exist, make empty
+
+    paymentMethod: localStorage.getItem("paymentMethod")
+      ? localStorage.getItem("paymentMethod")
+      : "",
     cartItems: localStorage.getItem("cartItems") //if cart items exists in the localstorage
       ? JSON.parse(localStorage.getItem("cartItems")) //use JSON.parse to convert local storage cartITems(which are string rn) into javacript object (aka json)
       : [],
@@ -40,6 +48,9 @@ function reducer(state, action) {
       return { ...state, cart: { ...state.cart, cartItems } };
     }
 
+    case "CART_CLEAR":
+      return { ...state, cart: { ...state.cart, cartItems: [] } }; // keeps everything the same except resets the cart items to an empty array
+
     case "USER_SIGNIN":
       return { ...state, userInfo: action.payload };
 
@@ -47,6 +58,31 @@ function reducer(state, action) {
       return {
         ...state,
         userInfo: null,
+        cart: {
+          cartItems: [],
+          shippingAddress: {},
+          paymentMethod: "",
+        },
+      };
+
+    case "SAVE_SHIPPING_ADDRESS":
+      return {
+        ...state, // this is being changed
+        cart: {
+          // the change is in the cart and its adding a shipping address
+          ...state.cart,
+          shippingAddress: action.payload, //update shipping address field with this data/payload from shipping page.
+        },
+      };
+
+    case "SAVE_PAYMENT_METHOD":
+      return {
+        ...state, // this is being changed
+        // the change is in the cart and its adding a payment method
+        cart: {
+          ...state.cart,
+          paymentMethod: action.payload,
+        }, //update payment method field with this data/payload from shipping page.
       };
 
     default:

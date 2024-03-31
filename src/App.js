@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -6,6 +6,8 @@ import {
   Redirect,
   Routes,
   Navigate,
+  useLocation,
+  useNavigate,
 } from "react-router-dom";
 
 import { ToastContainer } from "react-toastify";
@@ -31,8 +33,51 @@ import ProductPage from "./pages/product-page/product-page.component";
 import { Alert } from "shards-react";
 import { AiFillWarning } from "react-icons/ai";
 import ExpandingSearchBox from "./components/expanding-search-box/expanding-search-box.component";
+import axios from "axios";
+import ShippingPage from "./pages/shipping/shipping-page.component";
+import SignUpPage from "./pages/sign-up/sign-up-page.component";
+import PaymentMethodsPage from "./pages/payment-methods-page/payment-methods-page.component";
+import PlaceOrderPage from "./pages/place-order-page/place-order-page.component";
+import OrderCompletePage from "./pages/order-complete-page/order-complete-page.component";
+import UserOrderHistory from "./pages/user-order-history/user-order-history.component";
+import UserProfilePage from "./pages/user-profile/user-profile.component";
 
 const App = () => {
+  // const location = useLocation();
+  // const navigate = useNavigate();
+  const [userCountry, setUserCountry] = useState("CAN");
+
+  useEffect(() => {
+    // Fetch user's country based on IP address
+    const fetchCountry = async () => {
+      try {
+        const response = await axios.get("http://ip-api.com/json");
+        const country = response.data.country;
+        setUserCountry(
+          country === "Canada"
+            ? "CAN"
+            : country === "United States"
+            ? "USA"
+            : "CAN"
+        );
+        // console.log("ip country: ", ipCountry);
+      } catch (error) {
+        console.error("Error fetching country :", error);
+      }
+    };
+    fetchCountry();
+  }, []);
+
+  useEffect(() => {
+    console.log("user country: ", userCountry);
+  }, [userCountry]);
+
+  function handleCountrySwitch() {
+    setUserCountry(userCountry === "CAN" ? "USA" : "CAN");
+    window.scrollTo(0, 0);
+    // navigate(`/${userCountry}/home`);
+  }
+
   return (
     <div
       className="site-container"
@@ -44,7 +89,7 @@ const App = () => {
       }}
     >
       <Router>
-        <NavbarFloating />
+        <NavbarFloating userCountry={userCountry} />
         <Alert theme="warning" className="maintenance-alert">
           <AiFillWarning />
           {"  "} Our site is undergoing changes - please use desktop for best
@@ -53,30 +98,61 @@ const App = () => {
           <AiFillWarning />
         </Alert>
         <Routes>
-          <Route path="/" element={<Navigate to="/CAN/home" />} />
-          <Route path="/CAN/home" element={<HomePage />} />
-          <Route path="/CAN/products" element={<ProductSearchPage />} />
-          <Route path="/CAN/products/:slug" element={<ProductPage />} />{" "}
-          {/* :slug    is a parameter/argument/variable that is inserted from the product slug */}
-          <Route path="/CAN/search" element={<ProductSearchPage />} />
-          {/* <Route path="/shop" element={<ProductListingsPage />} /> */}
-          <Route path="/CAN/showroom" element={<Showroom />} />
-          <Route path="/CAN/contact-us" element={<ContactPage />} />
-          <Route path="/CAN/sign-in" element={<SignInPage />} />
-          <Route path="/CAN/cart" element={<CartPage />} />
-          <Route path="/CAN/cart:id" element={<CartPage />} />
-          {/*  */}
-          <Route path="/USA/home" element={<HomePage />}></Route>
-          <Route path="/USA/products" element={<ProductSearchPage />} />
-          <Route path="/USA/products/:slug" element={<ProductPage />} />
-          <Route path="/USA/search" element={<ProductSearchPage />} />
-          <Route path="/USA/showroom" element={<Showroom />} />
-          <Route path="/USA/contact-us" element={<ContactPage />} />
-          <Route path="/USA/sign-in" element={<SignInPage />} />
-          <Route path="/USA/cart" element={<CartPage />} />
-          <Route path="/USA/cart:id" element={<CartPage />} />
+          <Route path="/" element={<Navigate to={`/${userCountry}/home`} />} />
+          <Route
+            path="/:country/*"
+            element={
+              <Routes>
+                <Route path="home" element={<HomePage />} />
+                <Route path="products" element={<ProductSearchPage />} />
+                <Route
+                  path="products/:slug"
+                  element={<ProductPage userCountry={userCountry} />}
+                />
+                <Route path="search" element={<ProductSearchPage />} />
+                <Route path="showroom" element={<Showroom />} />
+                <Route path="contact-us" element={<ContactPage />} />
+                <Route
+                  path="sign-in"
+                  element={<SignInPage userCountry={userCountry} />}
+                />
+                <Route
+                  path="sign-up"
+                  element={<SignUpPage userCountry={userCountry} />}
+                />
+                <Route
+                  path="shipping"
+                  element={<ShippingPage userCountry={userCountry} />}
+                />
+                <Route
+                  path="payment-method"
+                  element={<PaymentMethodsPage userCountry={userCountry} />}
+                />
+                <Route
+                  path="place-order"
+                  element={<PlaceOrderPage userCountry={userCountry} />}
+                />
+                <Route
+                  path="order/:id"
+                  element={<OrderCompletePage userCountry={userCountry} />}
+                />
+
+                <Route
+                  path="cart"
+                  element={<CartPage userCountry={userCountry} />}
+                />
+                <Route path="cart:id" element={<CartPage />} />
+              </Routes>
+            }
+          />
+          <Route path="/order-history" element={<UserOrderHistory />}></Route>
+          <Route path="/user-profile" element={<UserProfilePage />}></Route>
         </Routes>
-        <Footer />
+        <Footer
+          userCountry={userCountry}
+          onCountrySwitch={handleCountrySwitch}
+        />{" "}
+        {/* the handleCountrySwitch function is passed into component*/}
       </Router>
     </div>
   );

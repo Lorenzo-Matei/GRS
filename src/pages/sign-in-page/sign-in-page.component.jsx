@@ -17,11 +17,15 @@ import { Store } from "../../Store.jsx";
 import { toast } from "react-toastify";
 import { getError } from "../../util";
 
-const SignInPage = () => {
+const SignInPage = ({ userCountry }) => {
   const navigate = useNavigate();
   const { search } = useLocation(); // react hook,
   const redirectInUrl = new URLSearchParams(search).get("redirect"); // passes search object and then grabs redirect query
-  const redirect = redirectInUrl ? redirectInUrl : "/"; // checks redirectinurl if it exists otherwise default url is '/'
+  const redirect = redirectInUrl ? redirectInUrl : `/${userCountry}/home`; // checks redirectinurl if it exists otherwise default url is '/'
+
+  console.log(search);
+  console.log(redirectInUrl);
+  console.log(redirect);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,7 +46,7 @@ const SignInPage = () => {
         password,
       });
       ctxDispatch({ type: "USER_SIGNIN", payload: data });
-      // console.log(data);
+      console.log(data);
 
       localStorage.setItem("userInfo", JSON.stringify(data)); // key is userInfo, data is now a string datatype. userInfo is found under store 'case'
       navigate(redirect || "/");
@@ -79,7 +83,7 @@ const SignInPage = () => {
             Sign up to stay up to date on cutting edge industry equipment!
           </p>
           <hr id="signup-hr" />
-          <Link to={`/sign-in?redirect=${redirect}`}>
+          <Link to={`/${userCountry}/sign-up?redirect=${redirect}`}>
             <Button id="signup-btn" outline pill theme="danger">
               {/* if user is new, redirect user to signup page and set querying string to url fetched in redirect */}
               Sign Up Now!

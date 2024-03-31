@@ -43,7 +43,7 @@ import { param } from "jquery";
 import { timeout } from "workbox-core/_private";
 const cloudFrontDistributionLogosDomain =
   "https://dem6epkjrbcxz.cloudfront.net/logos/";
-const NavBarFloating = () => {
+const NavBarFloating = ({ userCountry }) => {
   const { state } = useContext(Store); //copied from product-page and removed dispatch as changes wont occur here
   const { cart, userInfo } = state;
   const navigate = useNavigate();
@@ -78,41 +78,43 @@ const NavBarFloating = () => {
 
   const [ipCountry, setipCountry] = useState("");
 
-  useEffect(() => {
-    const fetchCountry = async () => {
-      try {
-        const response = await axios.get("http://ip-api.com/json");
-        setipCountry((prevCountry) => (prevCountry = response.data.country));
-        // console.log("ip country: ", ipCountry);
-      } catch (error) {
-        console.error("Error fetching country :", error);
-      }
-    };
+  /// country/region related functions
 
-    fetchCountry();
-    redirectSiteToCountry();
-  }, []);
+  // useEffect(() => {
+  //   const fetchCountry = async () => {
+  //     try {
+  //       const response = await axios.get("http://ip-api.com/json");
+  //       setipCountry((prevCountry) => (prevCountry = response.data.country));
+  //       // console.log("ip country: ", ipCountry);
+  //     } catch (error) {
+  //       console.error("Error fetching country :", error);
+  //     }
+  //   };
 
-  useEffect(() => {
-    console.log("ip country: ", ipCountry);
-  }, [ipCountry]);
+  //   fetchCountry();
+  //   redirectSiteToCountry();
+  // }, []);
 
-  function redirectSiteToCountry() {
-    const urlPath = location.pathname;
-    const currentUrlCountry = urlPath.split("/");
-    var redirectURL = "";
+  // useEffect(() => {
+  //   console.log("ip country: ", ipCountry);
+  // }, [ipCountry]);
 
-    if (ipCountry.toLowerCase().includes("canada")) {
-      currentUrlCountry[1] = "CAN";
-    } else {
-      currentUrlCountry[1] = "USA";
-    }
+  // function redirectSiteToCountry() {
+  //   const urlPath = location.pathname;
+  //   const currentUrlCountry = urlPath.split("/");
+  //   var redirectURL = "";
 
-    redirectURL = currentUrlCountry.join("/");
-    console.log("redirect URL: ", redirectURL);
+  //   if (ipCountry.toLowerCase().includes("canada")) {
+  //     currentUrlCountry[1] = "CAN";
+  //   } else {
+  //     currentUrlCountry[1] = "USA";
+  //   }
 
-    navigate(redirectURL);
-  }
+  //   redirectURL = currentUrlCountry.join("/");
+  //   console.log("redirect URL: ", redirectURL);
+
+  //   navigate(redirectURL);
+  // }
 
   function toggleDropDown() {
     setDropDownOpen(!dropdownOpen);
@@ -185,7 +187,7 @@ const NavBarFloating = () => {
           <Collapse open={collapseOpen} navbar>
             <Nav navbar>
               <NavItem>
-                <Link to={`/${getCountryParam()}/home`}>
+                <Link to={`/${userCountry}/home`}>
                   <button
                     type="button"
                     class="btn btn-outline-light btn-pill nav-btn"
@@ -205,7 +207,7 @@ const NavBarFloating = () => {
               </NavItemDropdown>
 
               <NavItem>
-                <Link to={`/${getCountryParam()}/showroom`}>
+                <Link to={`/${userCountry}/showroom`}>
                   <button
                     type="button"
                     class="btn btn-outline-light btn-pill nav-btn"
@@ -230,7 +232,7 @@ const NavBarFloating = () => {
 
               {userInfo ? (
                 <NavItemDropdownUser>
-                  <NavDropdownUser />
+                  <NavDropdownUser userCountry={userCountry} />
                 </NavItemDropdownUser>
               ) : (
                 <Link to={`/${getCountryParam()}/sign-in`}>

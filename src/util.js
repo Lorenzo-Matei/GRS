@@ -3,3 +3,10 @@ export const getError = (error) => {
     ? error.response.data.message
     : error.message;
 };
+
+export default function toBeQuoted(price) {
+  if (price <= 0) {
+    return "Quote to be Emailed";
+  }
+  return price;
+}

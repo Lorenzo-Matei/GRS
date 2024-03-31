@@ -16,6 +16,7 @@ seedRouter.get("/", async (req, res) => {
   // first we need to remove previous records of products and create a blank object
 
   await User.deleteMany({}); // empty object '{}' means return all models within Product
+  // await User.collection.dropIndexes();
   const createdUsers = await User.insertMany(userData.users);
 
   res.send({ createdProducts, createdUsers }); //this sends products to the front end

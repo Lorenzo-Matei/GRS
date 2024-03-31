@@ -38,6 +38,7 @@ const ACTIONS = {
   FETCH_REQUEST: "FETCH_REQUEST",
   FETCH_SUCCESS: "FETCH_SUCCESS",
   FETCH_FAILURE: "FETCH_FAILURE",
+  FETCH_MODEL_VARIANTS_SUCCESS: "FETCH_MODEL_VARIANTS_SUCCESS",
 };
 
 const reducer = (state, action) => {
@@ -52,6 +53,11 @@ const reducer = (state, action) => {
 
     case ACTIONS.FETCH_FAILURE:
       return { ...state, loading: false, error: action.payload }; //error returns the payload as a error message
+
+    case ACTIONS.FETCH_MODEL_VARIANTS_SUCCESS: // New case for fetching model variants
+      return { ...state, loading: false, modelVariants: action.payload };
+    default:
+      return state;
   }
 };
 
@@ -62,7 +68,7 @@ function displayVoltage(voltage, gas) {
     return "";
   }
 }
-function ProductPage() {
+function ProductPage({ userCountry }) {
   //////////////////////////////////////////////////////////////////  component start
   const captionStyle = {
     fontSize: "2em",
@@ -87,12 +93,16 @@ function ProductPage() {
   const locationCountry = locationPath.split("/")[1];
 
   ////////////////////////////////////   copied from products-page-component  //////////////////////////
-  const [{ loading, error, productData }, dispatch] = useReducer(reducer, {
-    //changed productsData to productData
-    loading: true,
-    error: "",
-    productData: [],
-  });
+  const [{ loading, error, productData, modelVariants }, dispatch] = useReducer(
+    reducer,
+    {
+      //changed productsData to productData
+      loading: true,
+      error: "",
+      productData: [],
+      modelVariants: [],
+    }
+  );
   // 1st param - {loading, error, products} -> created a set of states within an object
   // 2nd param, dispatch, is the different functions that will be passed through to manipulate the states in said object
   //useReducer 1st param - reducer -> reducer is the function created outside of the component.
@@ -113,6 +123,20 @@ function ProductPage() {
         dispatch({
           type: ACTIONS.FETCH_SUCCESS,
           payload: result.data,
+        });
+        // Fetch model variants
+        const modelVariantsResult = await axios.get(
+          "/api/products/productVariants",
+          {
+            params: {
+              productBrand: result.data.productBrand,
+              productName: result.data.productName,
+            },
+          }
+        );
+        dispatch({
+          type: ACTIONS.FETCH_MODEL_VARIANTS_SUCCESS,
+          payload: modelVariantsResult.data,
         });
       } catch (err) {
         dispatch({
@@ -136,7 +160,6 @@ function ProductPage() {
     const quantity = itemExists ? itemExists.quantity + 1 : 1; // '?' if itemExists then increase quantity +1 ':' otherwise make quantity 1
     const { data } = await axios.get(`/api/products/${productData._id}`); //ajax request to pull data on this item.
 
-    // console.log("const data on product page: ", data);
     if (data.countInStock < quantity) {
       window.alert("Sorry. Product is out of stock. Call to order or reserve!");
       return;
@@ -147,7 +170,7 @@ function ProductPage() {
       payload: { ...productData, quantity }, //this is the item and 1 amount is added to cart
     });
 
-    navigate("/cart");
+    navigate(`/${locationCountry}/cart`);
   };
 
   const productFullName =
@@ -303,7 +326,7 @@ function ProductPage() {
 
   function callForPriceCheck(price) {
     if (price == 0.0) {
-      return "Call For Price";
+      return "Add to Cart or Call For Quote";
     } else {
       return "$ " + price;
     }
@@ -358,6 +381,41 @@ function ProductPage() {
     }
     // product.onlinePrice[0]
   }
+
+  function emptyFieldCheck(field) {
+    if (field.length > 0) {
+      return " - " + field;
+    } else {
+      return "";
+    }
+  }
+  const [selectedVariant, setSelectedVariant] = useState(null);
+
+  useEffect(() => {
+    // Check if productData is available
+    if (productData) {
+      // Initialize selectedVariant with productData values
+      setSelectedVariant({
+        productBrand: productData.productBrand,
+        productName: productData.productName,
+        modelVariant: productData.modelVariant,
+        gasType: productData.gasType,
+        phase: productData.phase,
+        slug: productData.slug,
+      });
+    }
+  }, [productData]); // Trigger useEffect when productData changes
+
+  function handleVariantChange(event) {
+    const selectedValueString = event.target.value;
+    const selectedValue = JSON.parse(selectedValueString);
+    const slug = selectedValue.slug;
+
+    navigate(`/${userCountry}/products/${slug}`);
+    setSelectedVariant(selectedValueString); // Update selected variant after navigation
+  }
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////   copied from products-page-component  //////////////////////////
@@ -374,14 +432,13 @@ function ProductPage() {
       <Helmet>
         <title>{productFullName}</title>
       </Helmet>
-
       <div className="product-page-product-display-container">
         <div className="product-page-carousel-container">
           <Carousel
             className="product-page-carousel"
             // data={`/assets/images/test-products-images-nobg/${productData.images}`}
             data={productImagesList}
-            time={200000}
+            time={5000}
             width="100%"
             height="500px"
             captionStyle={captionStyle}
@@ -389,7 +446,7 @@ function ProductPage() {
             slideNumber={false}
             slideNumberStyle={slideNumberStyle}
             captionPosition="bottom"
-            automatic={true}
+            automatic={false}
             dots={true}
             pauseIconColor="grey"
             pauseIconSize="40px"
@@ -400,7 +457,6 @@ function ProductPage() {
             style={{
               textAlign: "center",
               height: "100%",
-              // width: "100%",
               maxWidth: "100%",
               maxHeight: "100%",
               margin: "2rem",
@@ -423,10 +479,39 @@ function ProductPage() {
           )}
 
           <h5 id="variant-title">Variant</h5>
-          <FormSelect size="sm" id="product-page-formselect">
-            <option value="first">{productFullName}</option>
-            {/* <option value="second">This is the second Variant.</option>
-            <option value="third">This is the third variant.</option> */}
+          <FormSelect
+            size="sm"
+            id="product-page-formselect"
+            onChange={handleVariantChange}
+            value={JSON.stringify(selectedVariant)}
+          >
+            {modelVariants.map((variant, index) => {
+              const {
+                productBrand,
+                productName,
+                modelVariant,
+                gasType,
+                phase,
+                slug,
+              } = variant;
+              const optionValue = {
+                productBrand,
+                productName,
+                modelVariant,
+                gasType,
+                phase,
+                slug,
+              };
+
+              return (
+                <option
+                  key={index}
+                  value={JSON.stringify(optionValue)}
+                >{`${modelVariant}${emptyFieldCheck(gasType)}${emptyFieldCheck(
+                  phase
+                )}`}</option>
+              );
+            })}
           </FormSelect>
 
           <div id="product-page-quantity-container">

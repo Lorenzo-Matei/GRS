@@ -1,0 +1,36 @@
+.user-profile-container {
+  text-align: center;
+  width: 90%;
+  max-width: 400px; /* Adjust the max-width as needed */
+  padding: 30px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10.5px);
+  -webkit-backdrop-filter: blur(10.5px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transform: translateZ(0);
+  will-change: opacity;
+  box-shadow: 14px 14px 22px rgba(0, 0, 0, 0.7);
+  color: #fff;
+
+  &:hover {
+    transform: scale(1); /* Set the scale to 1 or the default value */
+  }
+}
+
+.profile-icon {
+  font-size: 120px; /* Adjust the size as needed */
+  margin: 0 auto; /* Center the icon horizontally */
+  display: block; /* Ensure that the margin works correctly */
+}
+
+.profile-page-title {
+  margin: auto;
+  color: #fff;
+}
+
+.profile-field-title {
+  color: #fff;
+  text-align: left;
+  margin-bottom: 0px;
+}

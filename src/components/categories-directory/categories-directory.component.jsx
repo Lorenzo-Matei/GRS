@@ -48,7 +48,7 @@ function CategoriesDirectory() {
     },
     {
       id: 4,
-      title: "Beverage, Food Displays & Warmers",
+      title: "Beverage, Food Display & Warmers",
       imageUrl: cloudFrontMiscImages + "foodwarmers-category.jpg",
       //
     },
@@ -65,7 +65,7 @@ function CategoriesDirectory() {
     },
     {
       id: 7,
-      title: "Janitorial Chemicals",
+      title: "Janitorial & Chemicals",
       imageUrl: cloudFrontMiscImages + "janitorialchemicals-category.jpg",
     },
     {

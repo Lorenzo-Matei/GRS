@@ -17,7 +17,7 @@ import {
 import { Link } from "react-router-dom";
 import { Store } from "../../Store";
 
-function NavDropDownUser() {
+function NavDropDownUser({ userCountry }) {
   const [activeMenu, setActiveMenu] = useState("main");
   const [menuHeight, setMenuHeight] = useState(null);
   const dropdownRef = useRef(null);
@@ -49,6 +49,9 @@ function NavDropDownUser() {
   const signoutHandler = () => {
     ctxDispatch({ type: "USER_SIGNOUT" });
     localStorage.removeItem("userInfo");
+    localStorage.removeItem("shippingAddress");
+    localStorage.removeItem("paymentMethod");
+    window.location.href = `/${userCountry}/sign-in`;
   };
 
   return (
@@ -66,11 +69,12 @@ function NavDropDownUser() {
         onEnter={calcHeight}
       >
         <div className="menu">
-          <Link to="/profile">
+          <Link to="/user-profile">
             <DropDownItem leftIcon={<CgProfile />}>Profile</DropDownItem>
           </Link>
-
-          <DropDownItem leftIcon={<CgReorder />}>Order History</DropDownItem>
+          <Link to="/order-history">
+            <DropDownItem leftIcon={<CgReorder />}>Order History</DropDownItem>
+          </Link>
 
           <Link to="#signout" onClick={signoutHandler}>
             <DropDownItem leftIcon={<GoSignOut />}>SignOut</DropDownItem>

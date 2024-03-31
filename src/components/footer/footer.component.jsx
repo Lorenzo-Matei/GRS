@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, NavItem } from "shards-react";
 import "./footer.styles.scss";
 import {
@@ -11,10 +11,13 @@ import {
   FaCcVisa,
   FaCcMastercard,
 } from "react-icons/fa";
+import { SiAmericanexpress } from "react-icons/si";
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 // import { } from
 
-const Footer = () => {
+const Footer = ({ userCountry, onCountrySwitch }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -38,49 +41,61 @@ const Footer = () => {
     }
   }
 
-  function getCountryIcon() {
-    if (getCountryParam() === "USA") {
-      return <span class="fi fi-us" id="country-flag" />;
-    } else {
-      return <span class="fi fi-ca" id="country-flag" />;
-    }
-  }
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/api/products/mainCategories");
+        setCategories(response.data);
+        console.log("main categories: ", categories);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <div className="footer-container">
       <div className="footer-category">
         <h1 className="footer-title">Menu</h1>
-        <Link to={"/"}>
+        <Link to={`/${userCountry}/home`}>
           <h3 className="footer-page">Home</h3>
         </Link>
-        <Link to={"/search"}>
+        <Link to={`/${userCountry}/search`}>
           <h3 className="footer-page">Shop</h3>
         </Link>
-        <Link to={"/showroom"}>
+        <Link to={`/${userCountry}/showroom`}>
           <h3 className="footer-page">Showroom</h3>
         </Link>
-        <Link to={"/contact-us"}>
+        <Link to={`/${userCountry}/contact-us`}>
           <h3 className="footer-page">Contact Us</h3>
         </Link>
-        <Link to={"/sign-in"}>
+        <Link to={`/${userCountry}/sign-in`}>
           <h3 className="footer-page">Sign In</h3>
         </Link>
-        <Link to={"/cart"}>
+        <Link to={`/${userCountry}/cart`}>
           <h3 className="footer-page">Cart</h3>
         </Link>
       </div>
 
       <div className="footer-category">
         <h1 className="footer-title">Shop Categories</h1>
-        <h3 className="footer-page">Cooking</h3>
-        <h3 className="footer-page">Refrigeration</h3>
-        <h3 className="footer-page">Food Preparation</h3>
-        <h3 className="footer-page">Beverage, Food Display & Warmers</h3>
-        <h3 className="footer-page">Tables, Shelves & Furniture</h3>
-        <h3 className="footer-page">Janitorial & Chemicals</h3>
-        <h3 className="footer-page">Clothing</h3>
-        <h3 className="footer-page">Tabletop & Service</h3>
-        <h3 className="footer-page">Smallwares</h3>
+        {categories.map((category) => (
+          <Link
+            to={`/${userCountry}/search?category=${encodeURIComponent(
+              category
+            )}&subCategory=all&microCategory=all&query=all&price=all&brands=all&gasType=all&phase=all&voltage=all&rating=all&order=newest&page=1${encodeURIComponent(
+              category
+            )}`}
+          >
+            <h3 className="footer-page" key={category}>
+              {category}
+            </h3>
+          </Link>
+        ))}
       </div>
 
       <div className="footer-category">
@@ -157,23 +172,20 @@ const Footer = () => {
         <h1 className="footer-title">We Accept</h1>
         <FaCcVisa size={70} className="footer-icons-payment" />
         <FaCcMastercard size={70} className="footer-icons-payment" />
+        <SiAmericanexpress size={70} className="footer-icons-payment" />
       </div>
       <div className="footer-category">
         <NavItem>
-          {/* <Link to={`/${country}`}> */}
-          <button
-            type="button"
-            class="btn btn-outline-light btn-pill nav-btn"
-            onClick={() => {
-              changeCountry();
-              // setCountryChangePromptOpen(!countryChangePromptOpen);
-              // console.log("country state: ", countryChangePromptOpen);
-            }}
-          >
-            {changeCountryIcon()}
-            Site
-          </button>
-          {/* </Link> */}
+          <Link to={`/${userCountry === "CAN" ? "USA" : "CAN"}/home`}>
+            <button
+              type="button"
+              class="btn btn-outline-light btn-pill nav-btn"
+              onClick={onCountrySwitch}
+            >
+              {changeCountryIcon()}
+              Site
+            </button>
+          </Link>
         </NavItem>
       </div>
     </div>

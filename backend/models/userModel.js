@@ -11,10 +11,18 @@ const userSchema = new mongoose.Schema( // mongoose.schema takes 2 parameters
     // type: is the datatype that the field will be interpreted as
     // required: is whether the field can be left blank
     // unique: is whether any other instance has the same string. Cant have duplicates across all data
-
-    id: { type: Number, required: true, unique: true },
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: mongoose.Types.ObjectId,
+    },
     name: { type: String, required: true },
+    businessName: { type: String, required: false },
+    address: { type: String, Required: false },
+    city: { type: String, required: false },
+    postalCode: { type: String, Required: false },
+    country: { type: String, Required: false },
     email: { type: String, required: true, unique: true },
+    phoneNumber: { type: String, required: true },
     password: { type: String, required: true },
     isAdmin: { type: Boolean, default: false, required: true },
   },

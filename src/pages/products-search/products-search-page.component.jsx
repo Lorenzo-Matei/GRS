@@ -1,4 +1,11 @@
-import { useState, useEffect, useRef, useReducer, useCallback } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useReducer,
+  useCallback,
+  useContext,
+} from "react";
 import { CSSTransition } from "react-transition-group";
 
 import {
@@ -34,6 +41,13 @@ import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 
 import TreeMenu from "react-simple-tree-menu";
+import { Store } from "../../Store";
+// const pageCount = Math.ceil(productsData.length / PER_PAGE);
+const cloudFrontDistributionInventoryDomain =
+  "https://dem6epkjrbcxz.cloudfront.net/test-products-images-nobg/";
+
+const cloudFrontDistributionLogosDomain =
+  "https://dem6epkjrbcxz.cloudfront.net/logos/";
 
 function getBrandLogo(cloudFront, brand) {
   brand = brand.toLowerCase();
@@ -292,7 +306,10 @@ const ProductSearchPage = () => {
 
   function onloadTooltip() {}
 
-  useEffect(() => {});
+  useEffect(() => {
+    // Display toast notification when the component mounts
+    toast.info("Filter products with the blue button on the left!");
+  }, []); // Empty dependency array ensures the effect runs only once after the initial render
 
   const getFilterURL = (filter) => {
     const filterPage = filter.page || page;
@@ -403,19 +420,39 @@ const ProductSearchPage = () => {
     }
     // product.onlinePrice[0]
   }
+  ///////////////////////////////////// add to cart handler ////////////////////////////////
+  function addToCartToast(itemName) {
+    toast.success(itemName + " Product added to cart!", {
+      position: "bottom-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  }
 
-  // const pageCount = Math.ceil(productsData.length / PER_PAGE);
-  const cloudFrontDistributionInventoryDomain =
-    "https://dem6epkjrbcxz.cloudfront.net/test-products-images-nobg/";
-
-  const cloudFrontDistributionLogosDomain =
-    "https://dem6epkjrbcxz.cloudfront.net/logos/";
+  //////////////////////////////////////////////////////////////////////////
 
   return (
     <div className="product-search-container">
       <Helmet>
         <title>GRS Products</title>
       </Helmet>
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        // transition="Bounce"
+      />
 
       <div className="product-search-card">
         <div className="product-search-cardbody">
@@ -833,6 +870,7 @@ const ProductSearchPage = () => {
                     countInStock={product.inStock}
                     additionalInfo={product.additionalInfo}
                     shortDescription={product.shortDescription}
+                    addToCartToast={addToCartToast}
                   />
                 ))}
               </>
@@ -845,7 +883,7 @@ const ProductSearchPage = () => {
           previousLabel={"← Previous"}
           nextLabel={"Next →"}
           pageCount={pages}
-          pageRangeDisplayed={1}
+          pageRangeDisplayed={3}
           pageClassName={"react-paginate-page-nums"}
           activeLinkClassName={"react-paginate-page-active"}
           onPageChange={handlePageClick}

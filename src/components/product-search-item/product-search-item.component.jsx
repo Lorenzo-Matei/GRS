@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom"; // adding the Link Tag will ensure that the page isnt refreshed and thusly loads quicker
 
 import { Rating } from "react-simple-star-rating";
@@ -9,23 +9,22 @@ import { MdOutlineAddShoppingCart } from "react-icons/md";
 import "./product-search-item.styles.scss";
 import { Store } from "../../Store";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 // const ProductSearchItem = (props) => {
 function ProductSearchItem(props) {
   const { product } = props;
 
-  const { state, dispatch: ctxDispatch } = useContext(Store);
-  const {
-    cart: { cartItems },
-  } = state;
+  const { state, dispatch: ctxDispatch } = useContext(Store); //dispatch: is renamed to ctxdispatch to distinguish it from the dispatch in the reducer
+  const { cart } = state;
 
-  const addToCartHandler = async (item) => {
+  const addToCartHandler = async () => {
     //copied from product-page.jsx add to cart button
     // console.log("const data on items: ", props);
-    const itemExists = cartItems.find((x) => x._id === props._id); //checks if the product exists
+    console.log("product destruct: ", props._id);
+    const itemExists = cart.cartItems.find((x) => x._id === props._id); //checks if the product exists
     const quantity = itemExists ? itemExists.quantity + 1 : 1; // if item exists then it checks the quantity of the existing product and adds one
-    const { data } = await axios.get(`/api/productsData/${item._id}`); // this stores the products info into a data object
+    const { data } = await axios.get(`/api/products/${props._id}`); // this stores the products info into a data object
 
     if (data.countInStock < quantity) {
       window.alert("Sorry. Product is out of stock.");
@@ -33,8 +32,11 @@ function ProductSearchItem(props) {
     }
     ctxDispatch({
       type: "CART_ADD_ITEM",
-      payload: { ...item, quantity },
+      payload: { ...data, quantity },
     });
+    props.addToCartToast(props.name);
+
+    // toast.success(props.name + "\nAdded to Cart!");
   };
 
   function checkPrice(price) {
@@ -113,12 +115,13 @@ function ProductSearchItem(props) {
 
       return (
         <Button
-          disabled
+          // disabled
           className="product-listing-cart-button-no-stock"
           pill
           theme="light"
+          onClick={addToCartHandler}
         >
-          519-966-0950
+          Add to Cart
         </Button>
       );
     } else if (props.countInStock > 0 && props.price > 0.0) {
@@ -147,6 +150,19 @@ function ProductSearchItem(props) {
 
   return (
     <div className="search-item-card">
+      {/* <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition="Bounce"
+      /> */}
+
       <div className="search-item-cardbody">
         <div className="leftside-product-item">
           {/* <a> creates a link over the image that is clickable */}
@@ -184,15 +200,6 @@ function ProductSearchItem(props) {
         <div className="rightside-product-item">
           <Link to={`/${props.country}/products/${props.slug}`}>
             <p className="search-product-title">{props.name}</p>
-
-            {/* <Rating
-              m-auto
-              style={{ margin: "0 10px" }}
-              size={15}
-              readonly="true"
-              ratingValue={props.rating * 20}
-              className="search-product-ratings"
-            /> */}
           </Link>
 
           <div className="cart-price-container">
